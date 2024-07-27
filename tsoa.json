@@ -1,0 +1,25 @@
+{
+  "entryFile": "src/infrastructure/config/server.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/application/**/*Controller.ts"],
+  "spec": {
+    "outputDirectory": "build",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Token",
+        "name": "jwt_token",
+        "in": "header"
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "build",
+    "iocModule": "src/infrastructure/config/ioc",
+    "authenticationModule": "src/infrastructure/utils/Authentication.ts"
+  }
+
+}

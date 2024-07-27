@@ -1,0 +1,11 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "public.ecr.aws/x2l2d4t9/base-api:latest"
+  },
+  "Ports": [
+    {
+      "ContainerPort": 3030
+    }
+  ]
+}
