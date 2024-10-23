@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags } from "tsoa";
+import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags, Middlewares } from "tsoa";
 import * as jwt from "jsonwebtoken";
 import { SecurityService } from "./securityService";
-import { injectable } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import { IloginDto } from "./Dtos/loginDto";
 import { ISignupDto } from "./Dtos/signupDto";
 import { IUserDto } from "../users/userDto";
@@ -50,6 +50,4 @@ export class SecurityController extends Controller {
 
         return await this.securityService.signup(requestBody);
     }
-
-
 }

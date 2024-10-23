@@ -15,7 +15,6 @@ export class UsersRepository {
     public async get(id: string): Promise<IUserDto> {
         return await this.userRepository
             .createQueryBuilder("user")
-            .leftJoinAndSelect("user.payment", "payment")
             .where("user.id = :id", { id })
             .getOne()
     }

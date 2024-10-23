@@ -1,4 +1,4 @@
-# Survey API
+# Base API
 
 ## Start application
  
@@ -27,7 +27,7 @@
 * **local** `yarn local` *starts the server with nodemon locally*
 
 ## CI/CD
-### Currently Github Actions workflows is implemented for CI/CD
+### Currently Bitbucket pipelines workflows is implemented for CI/CD
 
 #### Workflow Summary: 
 * Tests run(unit and integration tests).

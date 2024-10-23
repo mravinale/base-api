@@ -1,5 +1,5 @@
 import { generate } from "randomstring";
-import { UserRole } from "../../../src/domain/entities/User";
+import { UserRole } from "../../domain/entities/User";
 
 export const generateMockUUID = (): string => {
   return `${generate({charset: 'hex', length: 8})}-${generate({charset: 'hex', length: 4})}-${generate({charset: 'hex', length: 4})}-${generate({charset: 'hex', length: 4})}-${generate({charset: 'hex', length: 12})}`;

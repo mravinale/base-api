@@ -1,6 +1,6 @@
 {
-  "name": "survey-api",
-  "version": "1.0.1",
+  "name": "base-api",
+  "version": "1.0.0",
   "scripts": {
     "local": "yarn start:local",
     "dev": "yarn start:dev",
@@ -19,8 +19,8 @@
     "copy:env": "cp -R src/infrastructure/config/env ./dist/src/infrastructure/config"
   },
   "main": "index.js",
-  "repository": "https://github.com/mravinale/node-starter-v2.git",
-  "author": "Mariano Ravinale <mravinale@gmail.com>",
+  "repository": "https://mravinale/base-api.git",
+  "author": "Mariano Ravinale <mravinale@tierone.cc>",
   "license": "MIT",
   "dependencies": {
     "@defer/client": "^2.2.0",
@@ -30,15 +30,12 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "handlebars": "^4.7.8",
     "jsdom": "^24.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
-    "openai": "^4.24.3",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
-    "resend": "^3.2.0",
     "sanitize-html": "^2.11.0",
     "swagger-ui-express": "^4.5.0",
     "tsoa": "^4.1.0",

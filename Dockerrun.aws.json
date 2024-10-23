@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "public.ecr.aws/x2l2d4t9/base-api:latest"
+    "Name": "public.ecr.aws/xxxxxxxx/base-api:latest"
   },
   "Ports": [
     {

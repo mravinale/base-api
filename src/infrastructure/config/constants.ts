@@ -8,6 +8,7 @@ if (result.error) throw result.error
 export default {
   environment: env.NODE_ENV,
   port: Number(env.PORT),
+  BASE_URL: env.BASE_URL,
   CRYPTO: {
     secret: env.CRYPTO_SECRET
   },
@@ -23,7 +24,7 @@ export default {
     accessKeyId: env.AWS_ACCESS_KEY_ID,
     secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
     mainBucket: env.AWS_MAINBUCKET
-  } ,
+  },
   errorTypes: {
     db: { statusCode: 500, name: 'Internal Server Error', message: 'database error' },
     validation: { statusCode: 400, name: 'Bad Request', message: 'validation error' },

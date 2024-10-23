@@ -15,7 +15,6 @@ export class SecurityRepository {
     public async get(email: string): Promise<ISecurityDto> {
         return await this.securityRepository
             .createQueryBuilder("user")
-            .leftJoinAndSelect("user.payment", "payment")
             .leftJoinAndSelect("user.organization", "organization")
             .where("user.email = :email", { email })
             .getOne()

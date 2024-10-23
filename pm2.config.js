@@ -1,6 +1,6 @@
 module.exports = {
   apps : [{
-    name   : "survey-api",
+    name   : "base-api",
     script : "./dist/src/index.js",
     exec_mode: 'cluster',
     instances: 1,

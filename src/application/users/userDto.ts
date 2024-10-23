@@ -1,6 +1,7 @@
 import { Column } from "typeorm";
 
 export interface IUserDto {
+    id?: string;
     name?: string;
     email?: string;
     phone?: string;
