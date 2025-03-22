@@ -20,9 +20,11 @@ export class DbConnection {
       port: constants.SQL.port,
       username: constants.SQL.username,
       password: constants.SQL.password,
-      database: constants.SQL.username,
+      database: constants.SQL.name,
       entities: [ `${ domainPath }/entities/*.{js,ts}`],
       synchronize: true,
+      migrationsRun: false,
+      logging: true,
       migrations: [`${ domainPath }/migrations/*.ts`],
       migrationsTableName: "migrations_table",
     })

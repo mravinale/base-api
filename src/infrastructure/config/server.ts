@@ -27,10 +27,11 @@ export class Server {
 
         this.app.use(bodyParser.json());
 
-        this.app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse) => {
-            return res.send(
-                swaggerUi.generateHTML(await import("../../../build/swagger.json"))
-            );
+        // Properly type-cast swagger middleware to work with express
+        this.app.use("/docs", swaggerUi.serve as unknown as express.RequestHandler[]);
+        this.app.get("/docs", async (_req: ExRequest, res: ExResponse) => {
+            const swaggerDocument = await import("../../../build/swagger.json");
+            return res.send(swaggerUi.generateHTML(swaggerDocument));
         });
 
         this.app.get('/', (req, res) => {
