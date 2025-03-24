@@ -10,7 +10,6 @@ export const generateUserModel = () => ({
   email: generate(20),
   name: generate(20),
   phone: generate(20),
-  skype: generate(20),
   role: UserRole.ADMIN,
   password: generate(20)
 });
