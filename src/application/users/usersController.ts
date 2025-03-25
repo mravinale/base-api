@@ -16,6 +16,7 @@ import { IUserDto } from "./userDto";
 import { IPaginationDto, PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import { UsersService } from "./usersService";
 import { injectable } from 'tsyringe';
+import { ApiError } from "../../infrastructure/utils/ErrorHandler";
 
 @injectable()
 @Route("users")
@@ -35,19 +36,29 @@ export class UsersController extends Controller {
             if (!user) {
                 console.log(`UsersController.get - User with ID ${id} not found`);
                 this.setStatus(404);
-                throw new Error(`User with id ${id} not found`);
+                throw new ApiError({
+                    statusCode: 404,
+                    name: 'Not Found',
+                    message: `User with id ${id} not found`
+                });
             }
             
             return user;
         } catch (error) {
             console.error(`UsersController.get - Error fetching user with ID ${id}:`, error);
-            // If the error was already handled (status already set), just rethrow
-            if (this.getStatus() === 404) {
+            
+            // If it's already an ApiError, just rethrow it
+            if (error instanceof ApiError) {
                 throw error;
             }
-            // Otherwise set status to 404 for any user-related errors
+            
+            // Otherwise wrap it in an ApiError with 404 status
             this.setStatus(404);
-            throw new Error(`User with id ${id} not found`);
+            throw new ApiError({
+                statusCode: 404,
+                name: 'Not Found',
+                message: `User with id ${id} not found`
+            });
         }
     }
 
