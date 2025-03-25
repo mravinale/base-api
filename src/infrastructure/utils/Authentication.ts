@@ -4,10 +4,11 @@ import { ISecurityDto } from "../../application/security/Dtos/securityDto";
 import { IUserDto } from "../../application/users/userDto";
 import constants from "./../config/constants";
 import { auth } from "../config/auth";
+import { UserRole } from "../../domain/entities/User";
 
 // Extend the User type to include role for authorization
 interface UserWithRole extends IUserDto {
-  role?: string;
+  role?: UserRole;
 }
 
 // Convert Express headers to Headers object for better-auth

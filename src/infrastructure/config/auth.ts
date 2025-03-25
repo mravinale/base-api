@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { jwt } from "better-auth/plugins";
-import { TypeORMAdapter } from "../auth/typeormAdapter";
+import { AdapterWrapper } from "../auth/adapterWrapper";
 import { container } from "tsyringe";
 import { DbConnection } from "./dbConnection";
 import constants from "./constants";
@@ -11,8 +11,8 @@ const isTestMode = process.env.NODE_ENV === 'test';
 // Create a configuration object for better-auth
 const authConfig = {
   // In test mode, use the memory adapter
-  // In production/development, use TypeORM adapter
-  adapter: isTestMode ? 'memory' : undefined,
+  // In production/development, use AdapterWrapper (which wraps TypeORMAdapter)
+  adapter: isTestMode ? 'memory' : new AdapterWrapper(container.resolve(DbConnection).datasource),
   
   // Use your existing secret for compatibility with session encryption
   secret: constants.CRYPTO.secret,

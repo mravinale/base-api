@@ -69,10 +69,46 @@ export class UsersRepository {
 
     public async create(entity: IUserDto): Promise<IUserDto | null> {
         try {
-            const user = await this.userRepository.create(entity);
-            return await this.userRepository.save(user);
+            console.log('Creating user with entity:', JSON.stringify(entity, null, 2));
+            
+            // Check if required fields are present
+            if (!entity.email) {
+                console.error('Email is required but missing');
+                return null;
+            }
+            
+            if (!entity.password) {
+                console.error('Password is required but missing');
+                return null;
+            }
+            
+            if (!entity.role) {
+                console.error('Role is required but missing');
+                return null;
+            }
+            
+            try {
+                const user = await this.userRepository.create(entity);
+                console.log('User entity created:', JSON.stringify(user, null, 2));
+                
+                try {
+                    const savedUser = await this.userRepository.save(user);
+                    console.log('User saved successfully:', JSON.stringify(savedUser, null, 2));
+                    return savedUser;
+                } catch (saveError) {
+                    console.error('Error saving user:', saveError);
+                    return null;
+                }
+            } catch (createError) {
+                console.error('Error creating user entity:', createError);
+                return null;
+            }
         } catch (error) {
             console.error('Error in UsersRepository.create:', error);
+            if (error instanceof Error) {
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+            }
             return null;
         }
     }

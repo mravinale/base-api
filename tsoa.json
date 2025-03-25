@@ -1,6 +1,6 @@
 {
   "entryFile": "src/infrastructure/config/server.ts",
-  "noImplicitAdditionalProperties": "throw-on-extras",
+  "noImplicitAdditionalProperties": "silently-remove-extras",
   "controllerPathGlobs": ["src/application/**/*Controller.ts"],
   "spec": {
     "outputDirectory": "build",
