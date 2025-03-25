@@ -38,6 +38,11 @@ export class ErrorHandler {
   }
 
   private static normalizeError(error: ApiError): ApiError {
+    // Check if the error has a status property (set by Authentication.ts)
+    if ((error as any).status) {
+      error.statusCode = (error as any).status;
+    }
+    
     const normalizedError: ApiError = new ApiError(error);
     Object.keys(constants.errorMap).forEach(errorKey => {
       if (errorKey === normalizedError.name) Object.assign(normalizedError, constants.errorMap[errorKey]);

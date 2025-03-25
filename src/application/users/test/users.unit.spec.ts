@@ -67,14 +67,15 @@ describe("Users Service", () => {
   it("should delete user", async () => {
     // Arrange
     const userId = generateMockUUID();
+    const affectedRows = 1; // TypeORM returns affected rows count as a number
     when(mockedUsersRepository.delete(anyString()))
-        .thenResolve(userId);
+        .thenResolve(affectedRows);
 
     // Act
     const result = await service.delete(userId);
 
     // Assert
-    expect(result).is.string(userId);
+    expect(result).to.equal(affectedRows);
   });
 
   it("should update user", async () => {

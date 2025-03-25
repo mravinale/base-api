@@ -21,12 +21,13 @@ export class SecurityService {
         return (this.cryptoService.decrypt(user.password) === loginDto.password) ?   user : null;
     }
 
-    public async checkUserEmail(email: string): Promise<ISecurityDto> {
+    public async checkUserEmail(email: string): Promise<ISecurityDto | null> {
         return await this.securityRepository.checkUserEmail(email);
     }
 
     public async signup(signupDto: ISignupDto): Promise<ISignupDto> {
         signupDto.password = this.cryptoService.encrypt(signupDto.password || '');
-        return await this.securityRepository.signup(signupDto);
+        const result = await this.securityRepository.signup(signupDto);
+        return result as ISignupDto; // Cast to ensure type compatibility
     }
 }

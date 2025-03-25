@@ -28,7 +28,12 @@ export class UsersController extends Controller {
     @Tags("Users")
     @Security("jwt", ["admin", "user"])
     public async get( id: string ): Promise<IUserDto> {
-        return this.usersService.get(id);
+        const user = await this.usersService.get(id);
+        if (!user) {
+            this.setStatus(404);
+            throw new Error(`User with id ${id} not found`);
+        }
+        return user;
     }
 
     @Get()
@@ -50,7 +55,13 @@ export class UsersController extends Controller {
     @Tags("Users")
     @Security("jwt", ["admin", "user"])
     public async create(@Body() body: IUserDto): Promise<IUserDto> {
-        return this.usersService.create(body);
+        const user = await this.usersService.create(body);
+        if (!user) {
+            this.setStatus(400);
+            throw new Error('Failed to create user');
+        }
+        this.setStatus(201);
+        return user;
     }
 
     @Response(400, "Bad request")
@@ -58,13 +69,23 @@ export class UsersController extends Controller {
     @Tags("Users")
     @Security("jwt", ["admin", "user"])
     public async update(id: string, @Body() body: IUserDto): Promise<IUserDto> {
-        return this.usersService.update(id, body);
+        const user = await this.usersService.update(id, body);
+        if (!user) {
+            this.setStatus(404);
+            throw new Error(`User with id ${id} not found or could not be updated`);
+        }
+        return user;
     }
 
     @Delete("{id}")
     @Tags("Users")
     @Security("jwt", ["admin", "user"])
     public async delete(id: string): Promise<string> {
-        return this.usersService.delete(id);
+        const result = await this.usersService.delete(id);
+        if (result === null) {
+            this.setStatus(404);
+            throw new Error(`User with id ${id} not found or could not be deleted`);
+        }
+        return `Successfully deleted ${result} record(s)`;
     }
 }
