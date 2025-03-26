@@ -28,7 +28,12 @@ export class OrganizationController extends Controller {
     @Tags("Organization")
     @Security("jwt", ["admin"])
     public async get( id: string ): Promise<IUserDto> {
-        return this.organizationService.get(id);
+        const organization = await this.organizationService.get(id);
+        if (!organization) {
+            this.setStatus(404);
+            return {} as IUserDto;
+        }
+        return organization;
     }
 
     @Get()

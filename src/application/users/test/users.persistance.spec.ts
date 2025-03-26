@@ -20,6 +20,17 @@ describe("Users Repository", () => {
     expect(dbConnection.datasource.isInitialized).to.equal(true);
   });
 
+  after(async () => {
+    console.log('Cleaning up after persistence tests...');
+    
+    // Close database connection
+    if (dbConnection && dbConnection.datasource && dbConnection.datasource.isInitialized) {
+      console.log('Closing database connection...');
+      await dbConnection.datasource.destroy();
+      console.log('Database connection closed successfully');
+    }
+  });
+
   it("should create user", async () => {
     // Act
     const user = await repository.create(model);
