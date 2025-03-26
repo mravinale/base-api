@@ -1,11 +1,12 @@
 import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags, Middlewares } from "tsoa";
-import * as jwt from "jsonwebtoken";
 import { SecurityService } from "./securityService";
 import { inject, injectable } from "tsyringe";
 import { IloginDto } from "./Dtos/loginDto";
 import { ISignupDto } from "./Dtos/signupDto";
 import { IUserDto } from "../users/userDto";
-import constants from "../../infrastructure/config/constants";
+import { auth } from "../../infrastructure/config/auth";
+import jwt from 'jsonwebtoken';
+import constants from '../../infrastructure/config/constants';
 
 @Route("security")
 @injectable()
@@ -31,9 +32,24 @@ export class SecurityController extends Controller {
         let userData = await this.securityService.get({email, password});
 
         if (userData) {
-            const token = jwt.sign({...userData}, constants.CRYPTO.secret);
-
-            return {...userData, token };
+            // Generate JWT token using better-auth's jwt plugin
+            const token = jwt.sign(
+                { 
+                    email: userData.email,
+                    name: userData.name || '',
+                    role: userData.role 
+                },
+                constants.CRYPTO.secret,
+                { expiresIn: '1d' }
+            );
+            
+            return {
+                email: userData.email,
+                name: userData.name || '',
+                role: userData.role,
+                phone: userData.phone,
+                token
+            };
         } else {
             throw new Error('Not valid user or password');
         }

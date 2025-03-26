@@ -1,3 +1,4 @@
+/* tslint:disable:member-ordering */
 import { Adapter, Where, BetterAuthOptions } from "better-auth/types";
 import { 
   DataSource, 
@@ -13,6 +14,10 @@ import {
 } from "typeorm";
 import { User } from "../../domain/entities/User";
 
+/**
+ * TypeORMAdapter class that implements the Adapter interface for better-auth
+ * This provides database operations for authentication and user management
+ */
 export class TypeORMAdapter implements Adapter {
   // Required adapter ID - public instance field
   public readonly id = "typeorm";
@@ -347,5 +352,141 @@ export class TypeORMAdapter implements Adapter {
     }
     
     return conditions;
+  }
+}
+
+/**
+ * AdapterWrapper class that wraps the TypeORMAdapter to make it compatible with the Adapter interface
+ * This resolves type compatibility issues between the TypeORMAdapter implementation and the Adapter interface
+ */
+export class AdapterWrapper implements Adapter {
+  // Public properties first
+  public readonly id: string;
+  
+  // Constructor must come after public properties but before private fields
+  constructor(dataSource: DataSource | null) {
+    this.typeormAdapter = new TypeORMAdapter(dataSource);
+    this.id = this.typeormAdapter.id;
+  }
+  
+  // Private properties after constructor
+  private readonly typeormAdapter: TypeORMAdapter;
+  
+  // Methods after properties
+  public async count(collectionOrData: string | { model: string; where?: Where[] }, query?: any): Promise<number> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.count({ model: collectionOrData, where: query ? [query] : undefined });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.count(collectionOrData);
+    }
+  }
+
+  public async create<T extends Record<string, any>, R = T>(
+    collectionOrData: string | { model: string; data: T; select?: string[] },
+    data?: any
+  ): Promise<R> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.create({ model: collectionOrData, data, select: undefined });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.create(collectionOrData);
+    }
+  }
+
+  public async findOne<T>(
+    collectionOrData: string | { model: string; where: Where[]; select?: string[] },
+    query?: any
+  ): Promise<T | null> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.findOne({ model: collectionOrData, where: [query], select: undefined });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.findOne(collectionOrData);
+    }
+  }
+
+  public async findMany<T>(
+    collectionOrData: string | {
+      model: string;
+      where?: Where[];
+      limit?: number;
+      sortBy?: { field: string; direction: "asc" | "desc" };
+      offset?: number;
+      select?: string[];
+    },
+    query?: any
+  ): Promise<T[]> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.findMany({
+        model: collectionOrData,
+        where: query ? [query] : undefined,
+        limit: undefined,
+        sortBy: undefined,
+        offset: undefined,
+        select: undefined
+      });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.findMany(collectionOrData);
+    }
+  }
+
+  public async update<T>(
+    collectionOrData: string | { model: string; where: Where[]; update: Record<string, any> },
+    query?: any,
+    data?: any
+  ): Promise<T | null> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.update({ model: collectionOrData, where: [query], update: data });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.update(collectionOrData);
+    }
+  }
+
+  public async updateMany(
+    collectionOrData: string | { model: string; where: Where[]; update: Record<string, any> },
+    query?: any,
+    data?: any
+  ): Promise<number> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.updateMany({ model: collectionOrData, where: [query], update: data });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.updateMany(collectionOrData);
+    }
+  }
+
+  public async delete(
+    collectionOrData: string | { model: string; where: Where[] },
+    query?: any
+  ): Promise<void> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.delete({ model: collectionOrData, where: [query] });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.delete(collectionOrData);
+    }
+  }
+
+  public async deleteMany(
+    collectionOrData: string | { model: string; where: Where[] },
+    query?: any
+  ): Promise<number> {
+    if (typeof collectionOrData === 'string') {
+      // Original better-auth interface
+      return this.typeormAdapter.deleteMany({ model: collectionOrData, where: [query] });
+    } else {
+      // TypeORMAdapter interface
+      return this.typeormAdapter.deleteMany(collectionOrData);
+    }
   }
 }

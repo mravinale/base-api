@@ -1,10 +1,9 @@
 import * as express from "express";
-import * as jwt from "jsonwebtoken";
-import { ISecurityDto } from "../../application/security/Dtos/securityDto";
 import { IUserDto } from "../../application/users/userDto";
-import constants from "./../config/constants";
 import { auth } from "../config/auth";
 import { UserRole } from "../../domain/entities/User";
+import jwt from 'jsonwebtoken';
+import constants from '../config/constants';
 
 // Extend the User type to include role for authorization
 interface UserWithRole extends IUserDto {
@@ -46,81 +45,66 @@ export async function expressAuthentication(
   }
 
   try {
-    // Try better-auth first (for new tokens)
+    // First, try to authenticate with better-auth
     try {
-      // Convert Express headers to format accepted by better-auth
+      // Get session using better-auth
       const session = await auth.api.getSession({ 
         headers: convertHeaders(request.headers)
       });
       
       if (session?.user) {
         // Check scopes against user role
-        const userWithRole = session.user as UserWithRole;
-        const userRole = userWithRole.role;
+        const userFromSession = session.user as UserWithRole;
+        const userRole = userFromSession.role;
+        
         if (scopes?.length && (!userRole || !scopes.includes(userRole))) {
-          return Promise.reject(new Error("JWT does not contain required scope"));
+          const error = new Error("JWT does not contain required scope");
+          (error as any).status = 401;
+          return Promise.reject(error);
         }
         
-        // Set user in request for backward compatibility
-        request.user = userWithRole;
-        return userWithRole;
+        // Set user in request for downstream middleware/controllers
+        request.user = userFromSession;
+        return userFromSession;
       }
-    } catch (e) {
-      // Fall back to legacy verification if better-auth fails
-      // This ensures backward compatibility
-    }
-
-    // Legacy token verification
-    const token =
-      request.body.token ||
-      request.query.token ||
-      request.headers?.authorization ||
-      request.headers["x-access-token"];
-
-    if (!token) {
-      return Promise.reject(new Error("No token provided"));
-    }
-
-    // Clean token (remove Bearer prefix if present)
-    const cleanToken = token.includes("Bearer") 
-      ? token.split("Bearer")[1].trim() 
-      : token;
-
-    // Verify with jsonwebtoken for backward compatibility
-    const decoded = await new Promise<ISecurityDto>((resolve, reject) => {
-      jwt.verify(cleanToken, constants.CRYPTO.secret, (err: any, decodedToken: any) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(decodedToken as ISecurityDto);
-      });
-    });
-
-    // Check scopes for authorization
-    if (!scopes || !decoded || !decoded.role || decoded.role === "" || !scopes.includes(decoded.role)) {
-      return Promise.reject(new Error("JWT does not contain required scope"));
-    }
-
-    // Set user in request for downstream middleware/controllers
-    request.user = decoded as IUserDto;
-    return decoded;
-  } catch (error) {
-    // Provide more specific error messages based on error type
-    if (error instanceof jwt.TokenExpiredError) {
-      const authError = new Error("Token expired");
-      (authError as any).status = 401; // Set status code to 401 Unauthorized
-      return Promise.reject(authError);
-    }
-    if (error instanceof jwt.JsonWebTokenError) {
-      const authError = new Error("Invalid token");
-      (authError as any).status = 401; // Set status code to 401 Unauthorized
-      return Promise.reject(authError);
+    } catch (betterAuthError) {
+      // If better-auth fails, we'll try direct JWT verification
+      console.log('Better-auth authentication failed, falling back to direct JWT verification');
     }
     
-    // For other authentication errors, also set 401 status
-    if (error instanceof Error && 
-        (error.message === "No token provided" || 
-         error.message === "JWT does not contain required scope")) {
+    // Fall back to direct JWT verification
+    const token = request.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      const error = new Error("No token provided");
+      (error as any).status = 401;
+      return Promise.reject(error);
+    }
+    
+    // Verify the token directly
+    const decodedToken = jwt.verify(token, constants.CRYPTO.secret) as any;
+    
+    // Create user object from token payload
+    const userFromToken: UserWithRole = {
+      id: decodedToken.id,
+      email: decodedToken.email,
+      name: decodedToken.name,
+      role: decodedToken.role
+    };
+    
+    // Check scopes against user role
+    if (scopes?.length && (!userFromToken.role || !scopes.includes(userFromToken.role))) {
+      const error = new Error("JWT does not contain required scope");
+      (error as any).status = 401;
+      return Promise.reject(error);
+    }
+    
+    // Set user in request for downstream middleware/controllers
+    request.user = userFromToken;
+    return userFromToken;
+  } catch (error) {
+    // For authentication errors, set 401 status
+    if (error instanceof Error) {
       (error as any).status = 401; // Set status code to 401 Unauthorized
     }
     
