@@ -8,7 +8,7 @@
     "test": "yarn start:test",
     "start:local": "yarn build && yarn env:local nodemon",
     "start:dev": "yarn build && yarn env:dev ts-node-dev ./dist/src/index.js",
-    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000 ./dist/src/application/**/test/*.spec.js --exit",
+    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000 ./dist/src/application/**/test/*.spec.js ./dist/src/infrastructure/**/test/*.spec.js --exit",
     "env:local": "cross-env NODE_ENV=local",
     "env:dev": "cross-env NODE_ENV=development",
     "env:test": "cross-env NODE_ENV=test",

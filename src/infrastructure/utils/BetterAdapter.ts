@@ -150,6 +150,11 @@ export class TypeORMAdapter implements Adapter {
       skip: data.offset
     };
     
+    // Add select fields if provided
+    if (data.select && data.select.length > 0) {
+      options.select = data.select;
+    }
+    
     // Add sorting if provided
     if (data.sortBy) {
       options.order = {
@@ -198,10 +203,8 @@ export class TypeORMAdapter implements Adapter {
         
         return user as unknown as T;
         
-      // For now, other models return null
-      // This will be expanded as we implement other models
       default:
-        return null;
+        throw new Error(`Model ${data.model} not supported by TypeORM adapter`);
     }
   }
 
@@ -226,10 +229,8 @@ export class TypeORMAdapter implements Adapter {
         const result = await userRepo.update(conditions, data.update);
         return result.affected || 0;
         
-      // For now, other models return 0
-      // This will be expanded as we implement other models
       default:
-        return 0;
+        throw new Error(`Model ${data.model} not supported by TypeORM adapter`);
     }
   }
 
@@ -250,9 +251,8 @@ export class TypeORMAdapter implements Adapter {
         await userRepo.delete(conditions);
         break;
         
-      // For now, other models do nothing
       default:
-        break;
+        throw new Error(`Model ${data.model} not supported by TypeORM adapter`);
     }
   }
 
@@ -273,10 +273,8 @@ export class TypeORMAdapter implements Adapter {
         const result = await userRepo.delete(conditions);
         return result.affected || 0;
         
-      // For now, other models return 0
-      // This will be expanded as we implement other models
       default:
-        return 0;
+        throw new Error(`Model ${data.model} not supported by TypeORM adapter`);
     }
   }
 
@@ -344,6 +342,14 @@ export class TypeORMAdapter implements Adapter {
           
         case "contains":
           conditions[field] = Like(`%${value}%`);
+          break;
+          
+        case "starts_with":
+          conditions[field] = Like(`${value}%`);
+          break;
+          
+        case "ends_with":
+          conditions[field] = Like(`%${value}`);
           break;
           
         default:
