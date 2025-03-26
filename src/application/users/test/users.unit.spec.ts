@@ -16,7 +16,7 @@ describe("Users Service", () => {
   before(async () => {
     mockedUsersRepository = mock(UsersRepository);
     mockedCryptoRepository = mock(CryptoService);
-    service = new UsersService(instance(mockedUsersRepository), instance(mockedCryptoRepository));
+    service = new UsersService(instance(mockedUsersRepository));
   });
 
   it("should getById", async () => {
