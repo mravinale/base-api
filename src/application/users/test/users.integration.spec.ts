@@ -9,6 +9,7 @@ import { generateUserModel } from "../../../infrastructure/utils/Models";
 import { CryptoService } from "../../../infrastructure/utils/CryptoService";
 import { UsersRepository } from "../usersRepository";
 import { DbConnection } from "../../../infrastructure/config/dbConnection";
+import { auth } from '../../../infrastructure/config/authConfiguration';
 
 const entityName: string = 'user';
 
@@ -50,6 +51,25 @@ describe(`Users Controller`, () => {
     // Ensure the user was created successfully
     if (!savedUser) {
       throw new Error('Failed to create test user for authentication');
+    }
+
+    // Register the test user with better-auth
+    try {
+      console.log('Registering test user with better-auth...');
+      await auth.api.signUpEmail({
+        body: {
+          email: testUser.email,
+          password: testUser.password,
+          name: testUser.name || testUser.email.split('@')[0],
+          metadata: {
+            role: testUser.role
+          }
+        }
+      });
+      console.log('Test user registered with better-auth');
+    } catch (error: unknown) {
+      console.log('Error registering with better-auth, user might already exist:', (error as Error).message);
+      // Continue anyway, as the user might already exist in better-auth
     }
     
     console.log('Initializing server...');

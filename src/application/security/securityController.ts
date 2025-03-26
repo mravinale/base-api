@@ -23,12 +23,6 @@ export class SecurityController extends Controller {
     }
 
     @Post("login")
-    @Example<ISecurityDto>({
-        email: "admin@admin.com",
-        name: "admin",
-        role: UserRole.ADMIN,
-        token: "token"
-    })
     @SuccessResponse("200", "Login successful")
     @Tags("Security")
     public async login(@Body() loginDto: IloginDto): Promise<ISecurityDto> {
@@ -42,58 +36,27 @@ export class SecurityController extends Controller {
         }
 
         try {
-            // Try to sign in with better-auth
-            try {
-                const response = await auth.api.signInEmail({
-                    body: {
-                        email,
-                        password
-                    }
-                });
-                
-                // Return user data with token
-                return {
-                    email: userData.email,
-                    name: userData.name || '',
-                    role: userData.role,
-                    phone: userData.phone,
-                    token: response.token
-                };
-            } catch (authError) {
-                // If sign-in fails, the user might not exist in better-auth yet
-                // Register the user with better-auth first
-                await auth.api.signUpEmail({
-                    body: {
-                        email,
-                        password,
-                        name: userData.name || email.split('@')[0],
-                        metadata: {
-                            role: userData.role
-                        }
-                    }
-                });
-                
-                // Then try signing in again
-                const response = await auth.api.signInEmail({
-                    body: {
-                        email,
-                        password
-                    }
-                });
-                
-                return {
-                    email: userData.email,
-                    name: userData.name || '',
-                    role: userData.role,
-                    phone: userData.phone,
-                    token: response.token
-                };
-            }
+           
+            const response = await auth.api.signInEmail({
+                body: {
+                    email,
+                    password
+                }
+            });
+            
+            // Return user data with token
+            return {
+                email: userData.email,
+                name: userData.name || '',
+                role: userData.role,
+                phone: userData.phone,
+                token: response.token
+            };
         } catch (error: any) {
             console.error('Login error:', error);
             throw new Error('Authentication failed');
         }
-    }
+    } 
 
     @Post('/signup')
     @SuccessResponse('200', 'Signup successful')
