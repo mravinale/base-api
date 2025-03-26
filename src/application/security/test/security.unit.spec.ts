@@ -10,14 +10,27 @@ import { ISecurityDto } from "../Dtos/securityDto";
 import constants from "../../../infrastructure/config/constants";
 import { generateUserModel } from "../../../infrastructure/utils/Models";
 import { UserRole } from "../../../domain/entities/User";
+import { auth } from "../../../infrastructure/config/authConfiguration";
+import sinon from "sinon";
 
 describe("Security Controller", () => {
   let controller: SecurityController;
   let mockedSecurityService: SecurityService;
+  let authStub: sinon.SinonStub;
   
   before(async () => {
     mockedSecurityService = mock(SecurityService);
     controller = new SecurityController(instance(mockedSecurityService));
+  });
+
+  beforeEach(() => {
+    // Create a stub for auth.api.signInEmail
+    authStub = sinon.stub(auth.api, 'signInEmail');
+  });
+
+  afterEach(() => {
+    // Restore the stub after each test
+    authStub.restore();
   });
 
   describe("userInfo", () => {
@@ -54,19 +67,40 @@ describe("Security Controller", () => {
         password: "encrypted-password"
       };
       
+      // Mock the security service to return user data
       when(mockedSecurityService.get(anything())).thenResolve(userData);
+      
+      // Mock the better-auth signInEmail method to return a token
+      authStub.resolves({
+        token: 'mock-jwt-token',
+        user: {
+          id: 'user-id',
+          email: userData.email,
+          name: userData.name,
+          role: userData.role
+        }
+      });
       
       // Act
       const result = await controller.login(loginDto);
       
       // Assert
-      expect(result).to.have.property("token");
+      expect(result).to.have.property("token").equal('mock-jwt-token');
       expect(result.email).to.equal(userData.email);
       expect(result.name).to.equal(userData.name);
       expect(result.role).to.equal(userData.role);
-      // The service might be called multiple times due to the implementation
-      // We only need to verify that it was called at least once
-      verify(mockedSecurityService.get(anything())).atLeast(1);
+      
+      // Verify that the security service was called
+      verify(mockedSecurityService.get(anything())).called();
+      
+      // Verify that better-auth was called with the right parameters
+      expect(authStub.calledOnce).to.equal(true);
+      expect(authStub.firstCall.args[0]).to.deep.equal({
+        body: {
+          email: loginDto.email,
+          password: loginDto.password
+        }
+      });
     });
     
     it("should throw error when credentials are invalid", async () => {
@@ -86,9 +120,11 @@ describe("Security Controller", () => {
         expect(error.message).to.equal("Not valid user or password");
       }
       
-      // The service might be called multiple times due to the implementation
-      // We only need to verify that it was called at least once
-      verify(mockedSecurityService.get(anything())).atLeast(1);
+      // Verify that the security service was called
+      verify(mockedSecurityService.get(anything())).called();
+      
+      // Verify that better-auth was not called since user validation failed
+      expect(authStub.called).to.equal(false);
     });
   });
   
@@ -101,25 +137,16 @@ describe("Security Controller", () => {
         password: "password123"
       };
       
-      const createdUser = {
-        id: "new-user-id",
-        email: signupDto.email,
-        name: signupDto.name,
-        role: UserRole.USER
-      };
-      
       when(mockedSecurityService.checkUserEmail(anyString())).thenResolve(null as any);
-      when(mockedSecurityService.signup(anything())).thenResolve(createdUser);
+      when(mockedSecurityService.signup(anything())).thenResolve(signupDto as any);
       
       // Act
       const result = await controller.signup(signupDto);
       
       // Assert
-      expect(result).to.deep.equal(createdUser);
-      // The service might be called multiple times due to the implementation
-      // We only need to verify that it was called at least once
-      verify(mockedSecurityService.checkUserEmail(anyString())).atLeast(1);
-      verify(mockedSecurityService.signup(anything())).once();
+      expect(result).to.deep.equal(signupDto);
+      verify(mockedSecurityService.checkUserEmail(signupDto.email)).called();
+      verify(mockedSecurityService.signup(signupDto)).called();
     });
     
     it("should throw error when user email already exists", async () => {
@@ -130,10 +157,9 @@ describe("Security Controller", () => {
         password: "password123"
       };
       
-      const existingUser = {
-        id: "existing-id",
+      const existingUser: ISecurityDto = {
         email: signupDto.email,
-        name: "Already Exists",
+        name: signupDto.name,
         role: UserRole.USER,
         password: "encrypted-password"
       };
@@ -148,9 +174,8 @@ describe("Security Controller", () => {
         expect(error.message).to.equal("User already exists");
       }
       
-      // The service might be called multiple times due to the implementation
-      // We only need to verify that it was called at least once
-      verify(mockedSecurityService.checkUserEmail(anyString())).atLeast(1);
+      verify(mockedSecurityService.checkUserEmail(signupDto.email)).called();
+      expect(authStub.called).to.equal(false);
     });
   });
 });

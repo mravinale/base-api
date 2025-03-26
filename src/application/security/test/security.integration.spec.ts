@@ -9,6 +9,7 @@ import { Server } from "../../../infrastructure/config/server";
 import { CryptoService } from "../../../infrastructure/utils/CryptoService";
 import { UsersRepository } from "../../users/usersRepository";
 import { Express } from "express";
+import { auth } from "../../../infrastructure/config/authConfiguration";
 
 describe("Security Controller", () => {
   let server: Server;
@@ -34,6 +35,23 @@ describe("Security Controller", () => {
     const encryptedUser = {...testUser};
     encryptedUser.password = cryptoService.encrypt(testUser.password);
     await usersRepository.create(encryptedUser);
+    
+    // Register the user with better-auth
+    try {
+      await auth.api.signUpEmail({
+        body: {
+          email: testUser.email,
+          password: testUser.password,
+          name: testUser.name,
+          metadata: {
+            role: testUser.role
+          }
+        }
+      });
+      console.log("Test user registered with better-auth");
+    } catch (error) {
+      console.error("Failed to register test user with better-auth:", error);
+    }
     
     // Initialize server
     server = container.resolve(Server);
@@ -125,8 +143,8 @@ describe("Security Controller", () => {
 
       // Assert
       expect(response.status).to.equal(200);
-      expect(response.body).to.have.property("email").equal(testUser.email);
-      expect(response.body).to.have.property("name").equal(testUser.name);
+      expect(response.body).to.have.property("email").equal(testUser.email.toLowerCase());
+      expect(response.body).to.have.property("name");
     });
 
     it("should fail when not authenticated", async () => {

@@ -1,80 +1,94 @@
-import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags, Middlewares } from "tsoa";
+import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags, Example } from "tsoa";
 import { SecurityService } from "./securityService";
 import { inject, injectable } from "tsyringe";
 import { IloginDto } from "./Dtos/loginDto";
 import { ISignupDto } from "./Dtos/signupDto";
 import { IUserDto } from "../users/userDto";
-import { auth } from "../../infrastructure/config/auth";
+import { ISecurityDto } from "./Dtos/securityDto"; 
+import { auth } from "../../infrastructure/config/authConfiguration";
 import { UserRole } from "../../domain/entities/User";
-import jwt from 'jsonwebtoken';
-import constants from '../../infrastructure/config/constants';
 
-@Route("security")
 @injectable()
+@Route("security")
+@Tags("Security")
 export class SecurityController extends Controller {
-
-    constructor(private securityService: SecurityService) {
+    constructor(@inject(SecurityService) private securityService: SecurityService) {
         super();
     }
 
     @Security("jwt", ["admin"])
-    @Get("/userinfo")
-    @Tags("Security")
-    public async userInfo( @Request() request: any ): Promise<IUserDto> {
-        return request.user; // user is set by the jwt middleware
+    @Get("userinfo")
+    public async userInfo(@Request() request: any): Promise<IUserDto> {
+        return request.user; 
     }
 
-    @Post('/login')
-    @SuccessResponse('200', 'Login successful')
+    @Post("login")
+    @Example<ISecurityDto>({
+        email: "admin@admin.com",
+        name: "admin",
+        role: UserRole.ADMIN,
+        token: "token"
+    })
+    @SuccessResponse("200", "Login successful")
     @Tags("Security")
-    public async login(@Body() requestBody: IloginDto): Promise<any> {
-        const { email, password } = requestBody;
-
-        // First, validate the user credentials using our existing service
-        let userData = await this.securityService.get({email, password});
+    public async login(@Body() loginDto: IloginDto): Promise<ISecurityDto> {
+        const { email, password } = loginDto;
+        
+        // First, check if the user exists in our database
+        const userData = await this.securityService.get({ email, password }); 
         
         if (!userData) {
-            throw new Error('Not valid user or password');
+            throw new Error("Not valid user or password");
         }
 
         try {
-            // Try to use better-auth for authentication, but don't fail if it doesn't work
-            let token;
+            // Try to sign in with better-auth
             try {
-                // Attempt to authenticate with better-auth
                 const response = await auth.api.signInEmail({
                     body: {
                         email,
                         password
                     }
                 });
-                token = response.token;
+                
+                // Return user data with token
+                return {
+                    email: userData.email,
+                    name: userData.name || '',
+                    role: userData.role,
+                    phone: userData.phone,
+                    token: response.token
+                };
             } catch (authError) {
-                // Fall back to direct JWT generation if better-auth fails
-                console.log('Falling back to direct JWT generation:', authError);
-                token = jwt.sign(
-                    { 
-                        email: userData.email,
-                        name: userData.name || '',
-                        role: userData.role 
-                    },
-                    constants.CRYPTO.secret,
-                    { 
-                        expiresIn: '1d',
-                        issuer: constants.BASE_URL || "http://localhost:3030",
-                        audience: constants.BASE_URL || "http://localhost:3030"
+                // If sign-in fails, the user might not exist in better-auth yet
+                // Register the user with better-auth first
+                await auth.api.signUpEmail({
+                    body: {
+                        email,
+                        password,
+                        name: userData.name || email.split('@')[0],
+                        metadata: {
+                            role: userData.role
+                        }
                     }
-                );
+                });
+                
+                // Then try signing in again
+                const response = await auth.api.signInEmail({
+                    body: {
+                        email,
+                        password
+                    }
+                });
+                
+                return {
+                    email: userData.email,
+                    name: userData.name || '',
+                    role: userData.role,
+                    phone: userData.phone,
+                    token: response.token
+                };
             }
-
-            // Return user data with token
-            return {
-                email: userData.email,
-                name: userData.name || '',
-                role: userData.role,
-                phone: userData.phone,
-                token
-            };
         } catch (error: any) {
             console.error('Login error:', error);
             throw new Error('Authentication failed');
@@ -92,28 +106,20 @@ export class SecurityController extends Controller {
         if (userData) throw new Error('User already exists');
 
         try {
-            // First create the user in our database
-            const newUser = await this.securityService.signup(requestBody);
-            
-            // Try to register with better-auth as well, but don't fail if it doesn't work
-            try {
-                await auth.api.signUpEmail({
-                    body: {
-                        email,
-                        password: password || '', // Ensure password is not undefined
-                        name: name || email.split('@')[0],
-                        metadata: {
-                            role: UserRole.USER, // Default role for new users
-                            phone
-                        }
+            // Create the user in better-auth first
+            await auth.api.signUpEmail({
+                body: {
+                    email,
+                    password: password || '', 
+                    name: name || email.split('@')[0],
+                    metadata: {
+                        role: UserRole.USER 
                     }
-                });
-            } catch (authError) {
-                // Log the error but continue with the existing user creation
-                console.log('Better-auth signup failed, continuing with existing user:', authError);
-            }
+                }
+            });
             
-            return newUser;
+            // Then create the user in our database
+            return await this.securityService.signup(requestBody);
         } catch (error: any) {
             throw new Error(`Failed to sign up: ${error.message}`);
         }

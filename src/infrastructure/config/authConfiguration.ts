@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { jwt, bearer } from "better-auth/plugins";
-import { AdapterWrapper } from "../auth/adapter";
+import { AdapterWrapper } from "../utils/BetterAdapter";
 import { container } from "tsyringe";
 import { DbConnection } from "./dbConnection";
 import constants from "./constants";
