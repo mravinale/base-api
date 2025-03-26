@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { jwt } from "better-auth/plugins";
+import { jwt, bearer } from "better-auth/plugins";
 import { AdapterWrapper } from "../auth/adapter";
 import { container } from "tsyringe";
 import { DbConnection } from "./dbConnection";
@@ -12,6 +12,12 @@ const authConfig = {
 
   // Use your existing secret for compatibility with session encryption
   secret: constants.CRYPTO.secret,
+  
+  // Enable email and password authentication
+  emailAndPassword: {
+    enabled: true,
+  },
+  
   plugins: [
     jwt({
       jwt: {
@@ -28,6 +34,11 @@ const authConfig = {
           role: session.user.role // Include role for authorization checks
         })
       }
+    }),
+    // Add bearer plugin for token authentication
+    bearer({
+      // Only accept signed tokens
+      requireSignature: false
     })
   ]
 };
