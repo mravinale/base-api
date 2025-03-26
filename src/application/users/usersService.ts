@@ -12,7 +12,7 @@ export class UsersService {
                 private cryptoService: CryptoService) {
     }
 
-    public async get(id: string): Promise<IUserDto> {
+    public async get(id: string): Promise<IUserDto | null> {
         let user = await this.usersRepository.get(id);
 
         return user;
@@ -22,19 +22,18 @@ export class UsersService {
          return await this.usersRepository.getPaginated(pageDto);
     }
 
-    public async create(user: IUserDto): Promise<IUserDto> {
+    public async create(user: IUserDto): Promise<IUserDto | null> {
         return this.usersRepository.create(user);
     }
 
-    public async delete(id: string): Promise<string> {
+    public async delete(id: string): Promise<number | null> {
         return await this.usersRepository.delete(id);
     }
 
-    public async update(id: string, user: IUserDto): Promise<IUserDto> {
+    public async update(id: string, user: IUserDto): Promise<IUserDto | null> {
+        let userDb = await this.usersRepository.update(id, user);
 
-        let userDb =   await this.usersRepository.update(id, user);
-
-        return userDb ;
+        return userDb;
     }
 
 }

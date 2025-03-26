@@ -24,7 +24,7 @@ export class DbConnection {
       entities: [ `${ domainPath }/entities/*.{js,ts}`],
       synchronize: true,
       migrationsRun: false,
-      logging: true,
+      logging: false,
       migrations: [`${ domainPath }/migrations/*.ts`],
       migrationsTableName: "migrations_table",
     })

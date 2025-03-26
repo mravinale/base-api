@@ -49,11 +49,30 @@ export class Server {
 
         if (this.dbConnection) await this.dbConnection.initializeDbConnection();
 
-        const listen = this.app.listen(this.port);
+        this.server = this.app.listen(this.port);
         Logger.info(
             `${constants.environment} server running on port: ${this.port}`
         );
-        return listen;
+        return this.server;
+    }
+
+    public async stop(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            if (this.server) {
+                this.server.close((err) => {
+                    if (err) {
+                        Logger.error('Error closing server', err);
+                        reject(err);
+                    } else {
+                        Logger.info('Server closed successfully');
+                        this.server = null;
+                        resolve();
+                    }
+                });
+            } else {
+                resolve();
+            }
+        });
     }
 
     private static unhandledRejectionHandler(err) {
@@ -66,4 +85,6 @@ export class Server {
     }
 
     private readonly port: number = constants.port;
+    private server: any = null;
+
 }

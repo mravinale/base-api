@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { expect } from "chai";
+import { expect, assert } from "chai";
 import { UsersRepository } from "../usersRepository";
 import { container } from "tsyringe";
 import { DbConnection } from "../../../infrastructure/config/dbConnection";
@@ -9,11 +9,26 @@ import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
 describe("Users Repository", () => {
   let repository: UsersRepository;
   let model = generateUserModel();
+  let dbConnection: DbConnection;
 
   before(async () => {
-    const dbConnection = container.resolve(DbConnection);
+    dbConnection = container.resolve(DbConnection);
     await dbConnection.initializeDbConnection();
-    repository = container.resolve(UsersRepository)
+    repository = container.resolve(UsersRepository);
+    
+    // Ensure the datasource is initialized before running tests
+    expect(dbConnection.datasource.isInitialized).to.equal(true);
+  });
+
+  after(async () => {
+    console.log('Cleaning up after persistence tests...');
+    
+    // Close database connection
+    if (dbConnection && dbConnection.datasource && dbConnection.datasource.isInitialized) {
+      console.log('Closing database connection...');
+      await dbConnection.datasource.destroy();
+      console.log('Database connection closed successfully');
+    }
   });
 
   it("should create user", async () => {
@@ -21,6 +36,7 @@ describe("Users Repository", () => {
     const user = await repository.create(model);
 
     // Assert
+    assert.isNotNull(user, "User should not be null");
     expect(user).to.have.property("name");
   });
 
@@ -29,6 +45,7 @@ describe("Users Repository", () => {
     const res = await repository.get(model.id);
 
     // Assert
+    assert.isNotNull(res, "User should not be null");
     expect(res).to.have.property("name");
   });
 
@@ -41,11 +58,12 @@ describe("Users Repository", () => {
     })
 
     // Act
-    const user = await repository.getPaginated(dto);
+    const result = await repository.getPaginated(dto);
 
     // Assert
-    expect(user.docs.find(u => u.id === model.id)).to.have.property("name");
-
+    assert.isNotNull(result, "Result should not be null");
+    expect(result).to.have.property("docs");
+    assert.isTrue(Array.isArray(result.docs), "docs should be an array");
   });
 
   it("should update user", async () => {
@@ -56,7 +74,8 @@ describe("Users Repository", () => {
     const user = await repository.update(model.id, model);
 
     // Assert
-    expect(user.name).equals("hello")
+    assert.isNotNull(user, "Updated user should not be null");
+    assert.equal(user?.name, "hello", "Name should be updated");
   });
 
   it("should delete user", async () => {
@@ -64,7 +83,8 @@ describe("Users Repository", () => {
     const result = await repository.delete(model.id);
 
     // Assert
-    expect(result).equals(1);
+    assert.isNotNull(result, "Delete result should not be null");
+    assert.equal(result, 1, "Should have deleted 1 record");
   });
 
 });

@@ -8,7 +8,7 @@
     "test": "yarn start:test",
     "start:local": "yarn build && yarn env:local nodemon",
     "start:dev": "yarn build && yarn env:dev ts-node-dev ./dist/src/index.js",
-    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000 ./dist/src/application/**/test/*.spec.js --exit",
+    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000 ./dist/src/application/**/test/*.spec.js ./dist/src/infrastructure/**/test/*.spec.js --exit",
     "env:local": "cross-env NODE_ENV=local",
     "env:dev": "cross-env NODE_ENV=development",
     "env:test": "cross-env NODE_ENV=test",
@@ -25,7 +25,9 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.7",
+    "better-auth": "^1.2.4",
     "body-parser": "^1.20.0",
+    "class-validator": "^0.14.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",

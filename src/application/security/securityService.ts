@@ -14,19 +14,28 @@ export class SecurityService {
     }
 
     public async get(loginDto: IloginDto): Promise<ISecurityDto | null> {
-        let user = await this.securityRepository.get( loginDto.email);
+        let user = await this.securityRepository.get(loginDto.email);
 
         if (!user) throw new Error('User not found');
-
-        return (this.cryptoService.decrypt(user.password) === loginDto.password) ?   user : null;
+        
+        // Handle the case where user.password might be undefined
+        if (!user.password) {
+            return null; // If no password is stored, authentication fails
+        }
+        
+        return (this.cryptoService.decrypt(user.password) === loginDto.password) ? user : null;
     }
 
-    public async checkUserEmail(email: string): Promise<ISecurityDto> {
+    public async checkUserEmail(email: string): Promise<ISecurityDto | null> {
         return await this.securityRepository.checkUserEmail(email);
     }
 
     public async signup(signupDto: ISignupDto): Promise<ISignupDto> {
-        signupDto.password = this.cryptoService.encrypt(signupDto.password || '');
-        return await this.securityRepository.signup(signupDto);
+        // Ensure password is not undefined before encrypting
+        if (signupDto.password) {
+            signupDto.password = this.cryptoService.encrypt(signupDto.password);
+        }
+        const result = await this.securityRepository.signup(signupDto);
+        return result as ISignupDto; // Cast to ensure type compatibility
     }
 }

@@ -1,29 +1,31 @@
-import { config } from 'dotenv';
-import { resolve as pathResolve } from 'path';
-const { env } = process;
+import dotenv from 'dotenv';
+dotenv.config({ debug: process.env.NODE_ENV !== 'production' });
 
-const result = config({ path: pathResolve(__dirname, `./env/.env.${env.NODE_ENV}`), debug: true });
-if (result.error) throw result.error
+// Function to get a dynamic port for tests
+export const getTestPort = (): number => {
+    // Generate a random port between 4000-9000 for tests
+    return process.env.TEST_PORT ? parseInt(process.env.TEST_PORT, 10) : Math.floor(Math.random() * 5000) + 4000;
+};
 
-export default {
-  environment: env.NODE_ENV,
-  port: Number(env.PORT),
-  BASE_URL: env.BASE_URL,
+const constants = {
+  environment: process.env.NODE_ENV,
+  port: process.env.NODE_ENV === 'test' ? getTestPort() : Number(process.env.PORT),
+  BASE_URL: process.env.BASE_URL,
   CRYPTO: {
-    secret: env.CRYPTO_SECRET
+    secret: process.env.CRYPTO_SECRET
   },
   SQL: {
-    name: env.SQL_DB,
-    username: env.SQL_USERNAME,
-    password: env.SQL_PASSWORD,
-    host: env.SQL_HOST,
-    port: Number(env.SQL_PORT),
-    dialect: env.SQL_DIALECT
+    name: process.env.SQL_DB,
+    username: process.env.SQL_USERNAME,
+    password: process.env.SQL_PASSWORD,
+    host: process.env.SQL_HOST,
+    port: Number(process.env.SQL_PORT),
+    dialect: process.env.SQL_DIALECT
   },
   AWS: {
-    accessKeyId: env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
-    mainBucket: env.AWS_MAINBUCKET
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    mainBucket: process.env.AWS_MAINBUCKET
   },
   errorTypes: {
     db: { statusCode: 500, name: 'Internal Server Error', message: 'database error' },
@@ -41,3 +43,5 @@ export default {
     };
   }
 };
+
+export default constants;
