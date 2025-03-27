@@ -4,7 +4,11 @@ import { AdapterWrapper } from "../utils/BetterAdapter";
 import { container } from "tsyringe";
 import { DbConnection } from "./dbConnection";
 import constants from "./constants";
- 
+import { EmailService } from "../utils/EmailService";
+
+// Resolve the EmailService from the container
+const emailService = container.resolve(EmailService);
+
 // Create a configuration object for better-auth
 const authConfig = {
   // In production/development, use AdapterWrapper (which wraps TypeORMAdapter)
@@ -16,6 +20,24 @@ const authConfig = {
   // Enable email and password authentication
   emailAndPassword: {
     enabled: true,
+    // Only require email verification in non-test environments
+    requireEmailVerification: constants.environment !== 'test',
+  },
+  
+  // Configure email verification
+  emailVerification: {
+    sendOnSignUp: constants.environment !== 'test', // Send verification email on signup (except in tests)
+    autoSignInAfterVerification: true, // Auto sign-in after verification
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      await emailService.sendVerificationEmail({ user, url, token });
+    }
+  },
+  
+  // Configure password reset
+  passwordReset: {
+    sendResetPasswordEmail: async ({ user, url, token }, request) => {
+      await emailService.sendPasswordResetEmail({ user, url, token });
+    }
   },
   
   plugins: [
