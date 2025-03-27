@@ -1,0 +1,178 @@
+# Project Rules 
+
+## Architecture Overview
+The project follows a clean layered architecture with clear separation of concerns. It's structured into three main layers:
+
+1. Domain Layer
+Located in /src/domain/, this layer contains:
+
+* Entities: Core business objects like User and Organization
+* Migrations: Database schema migrations
+
+2. Application Layer
+Located in /src/application/, this is organized by feature modules:
+
+Each module follows a consistent pattern with:
+
+* Controllers: Handle HTTP requests/responses
+* Services: Contain business logic
+* Repositories: Data access logic
+* DTOs: Data transfer objects for API communication
+* Tests: Unit, integration, and persistence tests
+
+3. Infrastructure Layer
+Located in /src/infrastructure/, this contains:
+
+* Config: Application configuration, server setup, dependency injection
+* Utils: Shared utilities like authentication, logging, error handling
+* BetterAdapter: Integration with the better-auth authentication service
+
+## Technical Implementation
+
+### API Framework
+* TSOA: Used for API routing, documentation, and OpenAPI/Swagger generation
+* Express: Web framework for handling HTTP requests
+* TypeORM: Object-Relational Mapper for database interactions
+* Dependency Injection
+* TSyringe: Used for dependency injection, making the code more testable and modular
+    * Components are registered in the IoC container and injected where needed
+
+### Authentication
+* better-auth: External authentication service used exclusively for user authentication
+* All authentication flows through better-auth
+* The authentication flow involves:
+    * Registering users with better-auth
+    * Storing user data in the application database
+    * Authenticating via better-auth for login
+
+### Error Handling
+* Centralized error handling through the ErrorHandler middleware
+* Service layer throws errors that are caught and processed at the controller level
+
+### Testing
+* Mocha: Test runner
+* Chai: Assertion library
+* ts-mockito and sinon: Mocking libraries
+* Comprehensive test coverage with unit, integration, and persistence tests
+
+### Code Organization Pattern
+The project follows a consistent pattern across modules:
+
+* Controllers: Handle HTTP concerns, input validation, and response formatting
+    * Use TSOA decorators for routing and API documentation
+    * Delegate business logic to services
+* Services: Implement business logic and validation
+    * Throw errors for validation failures
+    * Interact with repositories for data access
+* Repositories: Handle data access and persistence
+    * Use TypeORM for database operations
+    * Return domain entities
+* DTOs: Define data structures for API communication
+    * Separate from domain entities
+    * Used for input validation and response formatting
+
+
+## Code Style and Patterns Summary
+### Coding Style
+#### TypeScript-First Approach
+* Strong typing throughout the codebase
+* Interface-based design for DTOs and service contracts
+* Proper use of TypeScript decorators for metadata
+#### Naming Conventions
+* PascalCase: Classes, interfaces, and types (e.g., UsersController, IUserDto)
+* camelCase: Variables, methods, and properties
+* Prefixes: Interfaces often prefixed with "I" (e.g., ISignupDto)
+* Suffixes: Controllers, Services, and Repositories use descriptive suffixes
+#### File Organization
+* One class per file
+* Files named after their primary class
+* Consistent directory structure within modules
+#### Code Formatting
+* Consistent indentation (2 spaces)
+* Clear spacing around operators
+* Proper line breaks for readability
+* Semicolons at the end of statements
+
+### Design Patterns
+* Dependency Injection Pattern
+* Constructor injection using TSyringe
+* Services injected into controllers
+* Repositories injected into services
+* Facilitates testability and loose coupling
+#### Repository Pattern
+* Abstracts data access logic
+* Each entity has its own repository
+* Repositories handle CRUD operations
+* Returns domain entities, not DTOs
+#### Service Layer Pattern
+* Contains business logic
+* Validates inputs and enforces business rules
+* Orchestrates operations across repositories
+* Throws specific errors for validation failures
+#### DTO Pattern
+* Clear separation between API models and domain entities
+* Used for input validation and response formatting
+* Prevents exposing internal domain details
+#### Controller-Service-Repository Pattern
+* Controllers handle HTTP concerns
+* Services contain business logic
+* Repositories manage data access
+* Clear separation of responsibilities
+#### Decorator Pattern
+* TSOA decorators for API documentation
+* TSyringe decorators for dependency injection
+* TypeORM decorators for entity mapping
+#### Error Handling Pattern
+* Service layer throws specific errors
+* Controllers catch and process errors
+* Centralized error handling middleware
+#### Adapter Pattern
+* BetterAdapter encapsulates external authentication service
+* Provides a consistent interface to the application
+
+### Testing Patterns
+#### Unit Testing
+* Isolated testing of individual components
+* Heavy use of mocking with ts-mockito and sinon
+* Focus on behavior verification
+* Use user use-case unit tests as an example
+#### Integration Testing
+* Tests interaction between components
+* Verifies API endpoints work end-to-end
+* Use user use-case integration tests as an example
+##### Persistence Testing
+* Specifically tests database interactions
+* Verifies entity mappings and queries
+* Use user use-case persistance tests as an example
+##### Test Doubles
+* Mocks for dependencies
+* Stubs for external services
+* Spies for verification
+
+
+### Software Principles
+* **DRY (Don't Repeat Yourself)**:
+  * Extract common logic into shared utility functions
+  * Create base classes for similar components
+  * Use TypeScript generics for reusable type-safe components
+* **KISS (Keep It Simple, Stupid)**:
+  * Favor straightforward implementations over clever solutions
+  * Break complex functions into smaller, focused functions
+  * Limit method length to improve readability (< 20 lines)
+* **SOLID Principles**:
+  * Single Responsibility: Each class should have only one reason to change
+  * Open/Closed: Software entities should be open for extension but closed for modification
+  * Liskov Substitution: Subtypes must be substitutable for their base types
+  * Interface Segregation: Clients should not depend on interfaces they don't use
+  * Dependency Inversion: Depend on abstractions, not concretions
+
+## Recommendations
+* Use TSOA for routing, validation, API controllers implementation and documentation
+* Use TypeORM for database interactions
+* Use dependency injection for better testability
+* Use TSyringe for dependency injection
+* Use the provided code organization pattern for consistent code structure
+* Use TypeScript for type safety and better code quality
+* Use consistent naming conventions for variables, functions, and classes
+* Use consistent spacing and indentation for code readability
+* **Read linters and configuration files before creating new code**

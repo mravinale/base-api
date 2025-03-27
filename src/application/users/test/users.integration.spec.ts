@@ -8,6 +8,8 @@ import { UserDto } from "../userDto";
 import { generateUserModel } from "../../../infrastructure/utils/Models";
 import { CryptoService } from "../../../infrastructure/utils/CryptoService";
 import { UsersRepository } from "../usersRepository";
+import { UsersService } from "../usersService"; // Import UsersService
+import { MapperService } from "../../../infrastructure/utils/Mapper"; // Import MapperService with correct path
 import { DbConnection } from "../../../infrastructure/config/dbConnection";
 import { auth } from '../../../infrastructure/config/authConfiguration';
 
@@ -23,6 +25,8 @@ describe(`Users Controller`, () => {
   let dbConnection: DbConnection;
   let cryptoService: CryptoService;
   let usersRepository: UsersRepository;
+  let usersService: UsersService; // Declare usersService
+  let mapperService: MapperService; // Declare mapperService
   let testUser: any;
   let createdUserId: any;
 
@@ -35,11 +39,28 @@ describe(`Users Controller`, () => {
     // Add a delay to ensure resources from previous tests are released
     await new Promise(resolve => setTimeout(resolve, 1000));
     
+    // Make sure UsersService is registered in the container
+    if (!container.isRegistered(UsersService)) {
+      container.registerSingleton(UsersService);
+    }
+    
+    // Make sure UsersRepository is registered in the container
+    if (!container.isRegistered(UsersRepository)) {
+      container.registerSingleton(UsersRepository);
+    }
+    
+    // Make sure MapperService is registered in the container
+    if (!container.isRegistered(MapperService)) {
+      container.registerSingleton(MapperService);
+    }
+    
     // Initialize dependencies
     dbConnection = container.resolve(DbConnection);
     await dbConnection.initializeDbConnection();
     cryptoService = container.resolve(CryptoService);
     usersRepository = container.resolve(UsersRepository);
+    usersService = container.resolve(UsersService); // Resolve usersService
+    mapperService = container.resolve(MapperService); // Resolve mapperService
     
     console.log('Creating test user for authentication...');
     // Create a test user for authentication with unique identifier to avoid conflicts

@@ -313,12 +313,6 @@ describe(`Organization Controller`, () => {
 
   describe('DELETE /organization/:id', () => {
     it('should delete an organization', async function() {
-      // Skip if no organization was created
-      if (!createdOrgId) {
-        console.error('No organization ID available for testing');
-        this.skip();
-        return;
-      }
       
       // Create a new organization specifically for this delete test
       const deleteOrgName = `DeleteOrg-${Math.random().toString(36).substring(2, 10)}`;

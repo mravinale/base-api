@@ -84,7 +84,7 @@ export class Server {
         process.exit(1);
     }
 
-    private readonly port: number = constants.port;
+    private readonly port: number = constants.port ? Number(constants.port) : 3030;
     private server: any = null;
 
 }

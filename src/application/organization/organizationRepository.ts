@@ -1,4 +1,4 @@
-import { IUserDto } from "./organizationDto";
+import { IOrganizationDto } from "./organizationDto";
 import { singleton } from 'tsyringe';
 import { DbConnection } from "../../infrastructure/config/dbConnection";
 import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
@@ -12,7 +12,7 @@ export class OrganizationRepository {
         this.organizationRepository  = this.dbConnection.datasource.getRepository(Organization);
     }
 
-    public async get(id: string): Promise<IUserDto> {
+    public async get(id: string): Promise<IOrganizationDto> {
         return await this.organizationRepository
             .createQueryBuilder("organization")
             .leftJoinAndSelect("organization.users", "users")
@@ -53,7 +53,7 @@ export class OrganizationRepository {
         });
     }
 
-    public async create(entity: IUserDto): Promise<IUserDto> {
+    public async create(entity: IOrganizationDto): Promise<IOrganizationDto> {
         const organization = await this.organizationRepository.create(entity);
         return await this.organizationRepository.save(organization);
     }
@@ -63,7 +63,7 @@ export class OrganizationRepository {
       return result.affected;
     }
 
-    public async update(id: string, entity: IUserDto): Promise<IUserDto> {
+    public async update(id: string, entity: IOrganizationDto): Promise<IOrganizationDto> {
         const fieldsToUpdate = JSON.parse(JSON.stringify(entity));
 
         await this.organizationRepository.update(id, fieldsToUpdate);
