@@ -27,6 +27,11 @@ const constants = {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     mainBucket: process.env.AWS_MAINBUCKET
   },
+  // Email configuration for Resend.com
+  EMAIL: {
+    RESEND_API_KEY: process.env.RESEND_API_KEY || '',
+    DEFAULT_FROM_EMAIL: process.env.DEFAULT_FROM_EMAIL || 'noreply@yourdomain.com'
+  },
   errorTypes: {
     db: { statusCode: 500, name: 'Internal Server Error', message: 'database error' },
     validation: { statusCode: 400, name: 'Bad Request', message: 'validation error' },

@@ -75,12 +75,23 @@ export class Server {
         });
     }
 
-    private static unhandledRejectionHandler(err) {
-        Logger.error('Uncaught Exception thrown', err);
+    private static unhandledRejectionHandler(err: unknown) {
+        if (err instanceof Error) {
+            Logger.error('Uncaught Exception thrown', err);
+        } else {
+            Logger.error('Uncaught Exception thrown', String(err));
+        }
         process.exit(1);
     }
-    private static uncaughtExceptionHandler(reason) {
-        Logger.error('Unhandled Rejection at Promise', reason.stack);
+    
+    private static uncaughtExceptionHandler(reason: unknown) {
+        if (reason instanceof Error) {
+            Logger.error('Unhandled Rejection at Promise', reason.stack);
+        } else if (typeof reason === 'object' && reason !== null && 'stack' in reason) {
+            Logger.error('Unhandled Rejection at Promise', (reason as { stack: string }).stack);
+        } else {
+            Logger.error('Unhandled Rejection at Promise', String(reason));
+        }
         process.exit(1);
     }
 
