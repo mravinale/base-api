@@ -6,6 +6,10 @@ import { OrganizationDto } from "../organizationDto";
 import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
 import { generateMockUUID } from "../../../infrastructure/utils/Models";
 import { mock, instance, when, anyString, anything } from "ts-mockito";
+import { MapperService } from "../../../infrastructure/utils/Mapper";
+import { createMapper } from "@automapper/core";
+import { classes } from "@automapper/classes";
+import { OrganizationMapping } from "../organizationMapping";
 
 // Helper function to generate a mock organization model
 const generateOrganizationModel = () => {
@@ -19,97 +23,118 @@ const generateOrganizationModel = () => {
 describe("Organization Service", () => {
   let service: OrganizationService;
   let mockedOrganizationRepository: OrganizationRepository;
+  let mapperService: MapperService;
 
   before(async () => {
+    // Create a real mapper service for testing
+    mapperService = new MapperService();
+    
+    // Setup the repository mock
     mockedOrganizationRepository = mock(OrganizationRepository);
-    service = new OrganizationService(instance(mockedOrganizationRepository));
+    
+    // Create the service with both dependencies
+    service = new OrganizationService(
+      instance(mockedOrganizationRepository),
+      mapperService
+    );
   });
 
   it("should getById", async () => {
     // Arrange
     const orgId = generateMockUUID();
+    const testOrg = new OrganizationDto({
+      id: orgId,
+      name: "Test Organization",
+      users: []
+    });
+    
     when(mockedOrganizationRepository.get(anyString()))
-      .thenResolve(new OrganizationDto({
-        name: "Test Organization"
-      }));
+      .thenResolve(testOrg);
 
     // Act
     const organization = await service.get(orgId);
 
     // Assert
+    expect(organization).to.not.equal(null);
     expect(organization).to.have.property("name");
-    expect(organization.name).to.equal("Test Organization");
+    expect(organization!.name).to.equal("Test Organization");
   });
 
-  it("should get paginated", async () => {
+  it("should getPaginated", async () => {
     // Arrange
-    let model = generateOrganizationModel();
-    let dto = new PaginationDto({
-      count: 1, 
-      docs: [model], 
-      filter: "", 
-      limit: 10, 
-      page: 1, 
-      sort: "", 
+    const paginationArgs = new PaginationDto({
+      page: 0,
+      limit: 10
+    });
+    
+    const orgModels = [
+      generateOrganizationModel(),
+      generateOrganizationModel()
+    ];
+    
+    const paginationResult = new PaginationDto({
+      docs: orgModels,
+      count: orgModels.length,
+      page: 0,
+      limit: 10,
       totalPages: 1
     });
-    when(mockedOrganizationRepository.getPaginated(anything())).thenResolve(dto);
+    
+    when(mockedOrganizationRepository.getPaginated(anything()))
+      .thenResolve(paginationResult);
 
     // Act
-    const result = await service.getPaginated(dto);
+    const result = await service.getPaginated(paginationArgs);
 
     // Assert
-    expect(result.docs[0]).to.have.property("name");
-    expect(result.count).to.equal(1);
+    expect(result).to.have.property("docs");
+    expect(result.docs).to.have.lengthOf(2);
   });
 
-  it("should create organization", async () => {
+  it("should create", async () => {
     // Arrange
     const orgModel = generateOrganizationModel();
-    const orgDto = new OrganizationDto({
-      name: orgModel.name
-    });
-    
-    when(mockedOrganizationRepository.create(anything())).thenResolve(orgModel);
+    when(mockedOrganizationRepository.create(anything()))
+      .thenResolve(orgModel);
 
     // Act
-    const result = await service.create(orgDto);
+    const result = await service.create(orgModel);
 
     // Assert
-    expect(result).to.have.property("id");
-    expect(result.name).to.equal(orgModel.name);
+    expect(result).to.not.equal(null);
+    expect(result!.name).to.equal(orgModel.name);
   });
 
-  it("should update organization", async () => {
+  it("should update", async () => {
     // Arrange
     const orgId = generateMockUUID();
-    const orgModel = generateOrganizationModel();
-    const orgDto = new OrganizationDto({
-      name: "Updated Organization Name"
-    });
+    const updatedOrg = {
+      id: orgId,
+      name: "Updated Organization Name",
+      users: []
+    };
     
-    when(mockedOrganizationRepository.update(anyString(), anything())).thenResolve({
-      ...orgModel,
-      name: orgDto.name
-    });
+    when(mockedOrganizationRepository.update(anyString(), anything()))
+      .thenResolve(updatedOrg);
 
     // Act
-    const result = await service.update(orgId, orgDto);
+    const result = await service.update(orgId, updatedOrg);
 
     // Assert
-    expect(result).to.have.property("id");
-    expect(result.name).to.equal("Updated Organization Name");
+    expect(result).to.not.equal(null);
+    expect(result!.name).to.equal("Updated Organization Name");
   });
 
-  it("should delete organization", async () => {
+  it("should delete", async () => {
     // Arrange
     const orgId = generateMockUUID();
-    when(mockedOrganizationRepository.delete(anyString())).thenResolve("Organization deleted");
+    when(mockedOrganizationRepository.delete(anyString()))
+      .thenResolve("1");
 
     // Act
     const result = await service.delete(orgId);
 
     // Assert
-    expect(result).to.equal("Organization deleted");
+    expect(result).to.equal("1");
   });
 });

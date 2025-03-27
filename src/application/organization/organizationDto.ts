@@ -1,17 +1,23 @@
 import { User } from "../../domain/entities/User";
+import { AutoMap } from '@automapper/classes';
 
-export interface IUserDto {
+export interface IOrganizationDto {
     id?: string;
     name?: string;
     users?: User[];
 }
 
-export class OrganizationDto implements IUserDto {
+export class OrganizationDto implements IOrganizationDto {
+    @AutoMap()
     public id?: string;
+    
+    @AutoMap()
     public name?: string;
+    
+    @AutoMap()
     public users?: User[];
 
-    constructor(args: IUserDto) {
+    constructor(args: IOrganizationDto) {
         Object.assign(this, args);
     }
 }
