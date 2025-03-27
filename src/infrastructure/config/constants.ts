@@ -9,7 +9,7 @@ export const getTestPort = (): number => {
 
 const constants = {
   environment: process.env.NODE_ENV,
-  port: process.env.NODE_ENV === 'test' ? getTestPort() : Number(process.env.PORT),
+  port: process.env.NODE_ENV === 'test' ? getTestPort() : process.env.PORT,
   BASE_URL: process.env.BASE_URL,
   CRYPTO: {
     secret: process.env.CRYPTO_SECRET

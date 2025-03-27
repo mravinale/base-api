@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noImplicitAny": false,
+    "types": ["mocha", "node"]
+  },
+  "exclude": [
+    "node_modules",
+    "node_modules/**/*"
+  ]
+}
