@@ -8,8 +8,7 @@ import constants from '../config/constants';
 @singleton()
 export class EmailService {
   constructor() {
-    // Initialize Resend with API key from environment variables
-    this.resend = new Resend(constants.EMAIL.RESEND_API_KEY || 'xxxx');
+    this.resend = new Resend(constants.EMAIL.RESEND_API_KEY );
   }
 
   /**
@@ -129,5 +128,5 @@ export class EmailService {
     });
   }
   
-  private resend: Resend;
+  private resend!: Resend;
 }

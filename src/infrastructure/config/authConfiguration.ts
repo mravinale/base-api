@@ -7,7 +7,7 @@ import constants from "./constants";
 import { EmailService } from "../utils/EmailService";
 
 // Resolve the EmailService from the container
-const emailService = container.resolve(EmailService);
+const emailService = container.resolve(EmailService); 
 
 // Create a configuration object for better-auth
 const authConfig = {
@@ -28,14 +28,14 @@ const authConfig = {
   emailVerification: {
     sendOnSignUp: constants.environment !== 'test', // Send verification email on signup (except in tests)
     autoSignInAfterVerification: true, // Auto sign-in after verification
-    sendVerificationEmail: async ({ user, url, token }, request) => {
+    sendVerificationEmail: async ({ user, url, token }) => {
       await emailService.sendVerificationEmail({ user, url, token });
     }
   },
   
   // Configure password reset
   passwordReset: {
-    sendResetPasswordEmail: async ({ user, url, token }, request) => {
+    sendResetPasswordEmail: async ({ user, url, token }) => {
       await emailService.sendPasswordResetEmail({ user, url, token });
     }
   },

@@ -1,5 +1,36 @@
 import dotenv from 'dotenv';
-dotenv.config({ debug: process.env.NODE_ENV !== 'production' });
+import path from 'path';
+import fs from 'fs';
+
+/**
+ * Load environment variables from the appropriate .env file based on NODE_ENV
+ */
+const loadEnvironment = (): void => {
+  // Determine environment file name based on NODE_ENV
+  const envFile = process.env.NODE_ENV ? `.env.${process.env.NODE_ENV}` : '.env.local';
+  
+  // Define potential file locations (source or compiled code)
+  const possibleLocations = [
+    path.resolve(__dirname, 'env', envFile),                           
+    path.resolve(__dirname, '..', '..', '..', 'src/infrastructure/config/env', envFile)
+  ];
+  
+  // Find first existing env file
+  const envPath = possibleLocations.find(fs.existsSync);
+  
+  if (!envPath) {
+    throw new Error(`Environment file not found for ${envFile}`);
+  }
+
+  console.log(`Loading environment from: ${envPath}`);
+  dotenv.config({
+    path: envPath,
+    debug: process.env.NODE_ENV !== 'production'
+  });
+};
+
+// Load environment variables immediately
+loadEnvironment();
 
 // Function to get a dynamic port for tests
 export const getTestPort = (): number => {
