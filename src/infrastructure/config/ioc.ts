@@ -12,6 +12,9 @@ import { SecurityService } from '../../application/security/securityService';
 import { DbConnection } from './dbConnection';
 import { CryptoService } from '../utils/CryptoService';
 import { Logger } from '../utils/Logger';
+import { Resend } from 'resend';
+import constants from './constants';
+import { EmailService } from '../utils/EmailService';
 
 // Ensure all dependencies are registered
 function registerDependencies() {
@@ -34,10 +37,18 @@ function registerDependencies() {
     container.registerSingleton(UsersController);
     container.registerSingleton(OrganizationController);
     container.registerSingleton(SecurityController);
+    
+    // Register Resend Client
+    container.register<Resend>('ResendClient', {
+        useFactory: () => new Resend(constants.EMAIL.RESEND_API_KEY),
+    });
+
+    // Register EmailService explicitly
+    container.registerSingleton(EmailService);
 }
 
 // Initialize the container
-registerDependencies();
+export const initContainer = registerDependencies;
 
 export const iocContainer: IocContainer = {
     get: <T>(controller: { prototype: T }): T => {

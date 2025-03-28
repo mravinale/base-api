@@ -1,5 +1,7 @@
-import { Resend } from 'resend';
-import { singleton } from 'tsyringe';
+import 'reflect-metadata';
+import { Resend, type CreateEmailOptions, type CreateEmailResponse } from 'resend';
+import { singleton, inject } from 'tsyringe';
+import { Logger } from './Logger';
 import constants from '../config/constants';
 
 /**
@@ -7,8 +9,9 @@ import constants from '../config/constants';
  */
 @singleton()
 export class EmailService {
-  constructor() {
-    this.resend = new Resend(constants.EMAIL.RESEND_API_KEY );
+  // Inject Resend instance instead of creating it here
+  constructor(@inject('ResendClient') private readonly resend: Resend) {
+    Logger.info('Email service initialized.');
   }
 
   /**
@@ -31,6 +34,7 @@ export class EmailService {
     from?: string;
   }) {
     try {
+      Logger.info(`Attempting to send email. To: ${to}, Subject: ${subject}`);
       const { data, error } = await this.resend.emails.send({
         from,
         to,
@@ -39,13 +43,14 @@ export class EmailService {
       });
 
       if (error) {
-        console.error('Email sending failed:', error);
+        Logger.error('Email sending failed:', error);
         throw new Error(`Failed to send email: ${error.message}`);
       }
 
+      Logger.info(`Email sent successfully. To: ${to}, ID: ${data?.id}`);
       return data;
     } catch (error) {
-      console.error('Email service error:', error);
+      Logger.error('Email service error:', error);
       throw error;
     }
   }
@@ -53,8 +58,8 @@ export class EmailService {
   /**
    * Send a verification email for BetterAuth
    * @param user User object containing email
-   * @param url Verification URL
-   * @param token Verification token
+   * @param url Verification URL (including token)
+   * @param token Verification token (optional, might not be needed if included in url)
    */
   public async sendVerificationEmail({
     user,
@@ -66,8 +71,8 @@ export class EmailService {
     token: string;
   }) {
     const subject = 'Verify your email address';
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    const html =
+      `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>Email Verification</h2>
         <p>Hello ${user.name || 'there'},</p>
         <p>Please verify your email address by clicking the button below:</p>
@@ -82,18 +87,23 @@ export class EmailService {
       </div>
     `;
 
-    return this.sendEmail({
-      to: user.email,
-      subject,
-      html,
-    });
+    try {
+      await this.sendEmail({
+        to: user.email,
+        subject,
+        html,
+      });
+      Logger.info(`Verification email sent to ${user.email}`);
+    } catch (error) {
+      Logger.error(`Error sending verification email to ${user.email}:`, error);
+    }
   }
 
   /**
    * Send a password reset email
    * @param user User object containing email
-   * @param url Reset password URL
-   * @param token Reset token
+   * @param url Reset password URL (including token)
+   * @param token Reset token (optional, might not be needed if included in url)
    */
   public async sendPasswordResetEmail({
     user,
@@ -105,8 +115,7 @@ export class EmailService {
     token: string;
   }) {
     const subject = 'Reset your password';
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    const html = `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2>Password Reset</h2>
         <p>Hello ${user.name || 'there'},</p>
         <p>We received a request to reset your password. Click the button below to create a new password:</p>
@@ -118,15 +127,18 @@ export class EmailService {
         <p>Or copy and paste this link in your browser:</p>
         <p>${url}</p>
         <p>If you didn't request a password reset, you can safely ignore this email.</p>
-      </div>
-    `;
+      </div>`;
 
-    return this.sendEmail({
-      to: user.email,
-      subject,
-      html,
-    });
+    try {
+      await this.sendEmail({
+        to: user.email,
+        subject,
+        html,
+      });
+      Logger.info(`Password reset email sent to ${user.email}`);
+    } catch (error) {
+      Logger.error(`Error sending password reset email to ${user.email}:`, error);
+      throw error;
+    }
   }
-  
-  private resend!: Resend;
 }

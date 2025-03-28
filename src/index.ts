@@ -1,5 +1,14 @@
-import { Server } from "./infrastructure/config/server";
+import 'reflect-metadata';
+import { initContainer } from './infrastructure/config/ioc'; 
+import { container } from 'tsyringe';
+import { Server } from './infrastructure/config/server';
 
-const server: Server = new Server();
+// Initialize the IoC container FIRST
+initContainer();
+
+// Now resolve the Server instance and start it
+const server = container.resolve(Server);
 
 server.start();
+
+export default server;

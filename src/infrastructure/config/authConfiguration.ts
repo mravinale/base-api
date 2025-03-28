@@ -6,11 +6,8 @@ import { DbConnection } from "./dbConnection";
 import constants from "./constants";
 import { EmailService } from "../utils/EmailService";
 
-// Resolve the EmailService from the container
-const emailService = container.resolve(EmailService); 
-
 // Create a configuration object for better-auth
-const authConfig = {
+export const authConfig = {
   // In production/development, use AdapterWrapper (which wraps TypeORMAdapter)
   adapter: new AdapterWrapper(container.resolve(DbConnection).datasource),
 
@@ -29,6 +26,7 @@ const authConfig = {
     sendOnSignUp: constants.environment !== 'test', // Send verification email on signup (except in tests)
     autoSignInAfterVerification: true, // Auto sign-in after verification
     sendVerificationEmail: async ({ user, url, token }) => {
+      const emailService = container.resolve(EmailService); 
       await emailService.sendVerificationEmail({ user, url, token });
     }
   },
@@ -36,6 +34,7 @@ const authConfig = {
   // Configure password reset
   passwordReset: {
     sendResetPasswordEmail: async ({ user, url, token }) => {
+      const emailService = container.resolve(EmailService); 
       await emailService.sendPasswordResetEmail({ user, url, token });
     }
   },
