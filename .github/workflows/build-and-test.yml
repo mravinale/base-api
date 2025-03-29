@@ -53,6 +53,8 @@ jobs:
           SQL_PASSWORD=postgres
           SQL_DB=testdb
           SQL_DIALECT=postgres
+          CRYPTO_SECRET=test_secret_key_for_github_actions
+          BASE_URL=http://localhost:3000
           RESEND_API_KEY=${{ secrets.RESEND_API_KEY || 'test_key' }}
           DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL || 'test@example.com' }}
           EOF
