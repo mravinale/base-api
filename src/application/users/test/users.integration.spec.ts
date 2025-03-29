@@ -4,7 +4,7 @@ import supertest from 'supertest';
 import { container } from 'tsyringe';
 
 import { Server } from "../../../infrastructure/config/server";
-import { UserDto } from "../userDto";
+import { UserDto } from "../dtos/userDto";
 import { generateUserModel } from "../../../infrastructure/utils/Models";
 import { CryptoService } from "../../../infrastructure/utils/CryptoService";
 import { UsersRepository } from "../usersRepository";

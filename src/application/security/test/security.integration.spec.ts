@@ -4,7 +4,6 @@ import request from "supertest";
 import { container } from "tsyringe";
 import { DbConnection } from "../../../infrastructure/config/dbConnection";
 import { generateUserModel } from "../../../infrastructure/utils/Models";
-import { UserRole } from "../../../domain/entities/User";
 import { Server } from "../../../infrastructure/config/server";
 import { CryptoService } from "../../../infrastructure/utils/CryptoService";
 import { UsersRepository } from "../../users/usersRepository";
