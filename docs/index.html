@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base API - Node.js API Starter Template</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --info-color: #3498db;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0 80px;
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            margin-bottom: 40px;
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .badges {
+            margin: 1.5rem 0;
+        }
+        
+        .badge {
+            display: inline-block;
+            margin: 0 5px;
+        }
+        
+        .cta-buttons {
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            border: 2px solid white;
+        }
+        
+        main {
+            padding: 40px 0;
+        }
+        
+        section {
+            margin-bottom: 60px;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        ul {
+            list-style-type: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .architecture-diagram {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+        }
+        
+        .layer {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .domain-layer {
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .application-layer {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .infrastructure-layer {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .code-block {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            margin-top: 20px;
+        }
+        
+        .footer-links a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>Base API</h1>
+            <p class="subtitle">A robust Node.js API starter template with TypeScript, following clean architecture principles and best practices for modern backend development.</p>
+            
+            <div class="badges">
+                <img class="badge" src="https://github.com/mravinale/base.api/actions/workflows/build-and-test.yml/badge.svg" alt="Build and Test">
+                <img class="badge" src="https://codecov.io/gh/mravinale/base.api/branch/main/graph/badge.svg" alt="codecov">
+                <img class="badge" src="https://snyk.io/test/github/mravinale/base.api/badge.svg" alt="Known Vulnerabilities">
+            </div>
+            
+            <div class="cta-buttons">
+                <a href="https://github.com/mravinale/base.api" class="btn btn-primary">
+                    <i class="fab fa-github"></i> View on GitHub
+                </a>
+                <a href="https://github.com/mravinale/base.api#getting-started" class="btn btn-secondary">
+                    <i class="fas fa-rocket"></i> Get Started
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <section id="features">
+            <h2><i class="fas fa-star"></i> Features</h2>
+            <p>This project is a seed for building a production-ready Node.js API with everything you need to get started quickly.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fab fa-js"></i></div>
+                    <h3>TypeScript</h3>
+                    <p>Type-safe code with modern JavaScript features for better developer experience and fewer bugs.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                    <h3>Clean Architecture</h3>
+                    <p>Clear separation of concerns with domain-driven design principles for maintainable code.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-book"></i></div>
+                    <h3>API Documentation</h3>
+                    <p>Auto-generated OpenAPI/Swagger documentation for easy API exploration and testing.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-lock"></i></div>
+                    <h3>Authentication</h3>
+                    <p>Ready-to-use auth system with email verification and password reset functionality.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-database"></i></div>
+                    <h3>Database Integration</h3>
+                    <p>SQL support with TypeORM for efficient data access and management.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-vial"></i></div>
+                    <h3>Testing Framework</h3>
+                    <p>Comprehensive test setup for unit, integration, and persistence tests.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="architecture">
+            <h2><i class="fas fa-sitemap"></i> Architecture</h2>
+            <p>The project follows a clean, layered architecture with a clear separation of concerns:</p>
+            
+            <div class="architecture-diagram">
+                <div class="layer domain-layer">
+                    <h3>Domain Layer</h3>
+                    <ul>
+                        <li>Core business entities and logic</li>
+                        <li>Database migrations</li>
+                    </ul>
+                </div>
+                
+                <div class="layer application-layer">
+                    <h3>Application Layer</h3>
+                    <ul>
+                        <li>Controllers: Handle HTTP requests/responses</li>
+                        <li>Services: Contain business logic</li>
+                        <li>Repositories: Handle data access</li>
+                        <li>DTOs: Data Transfer Objects for validation and response formatting</li>
+                    </ul>
+                </div>
+                
+                <div class="layer infrastructure-layer">
+                    <h3>Infrastructure Layer</h3>
+                    <ul>
+                        <li>Configuration: Environment, database, and server setup</li>
+                        <li>Utils: Shared utilities and adapters</li>
+                        <li>Authentication: Security middleware and integrations</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="getting-started">
+            <h2><i class="fas fa-rocket"></i> Getting Started</h2>
+            
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Node.js (v20.x or higher)</li>
+                <li>Yarn package manager</li>
+                <li>PostgreSQL database</li>
+            </ul>
+            
+            <h3>Installation</h3>
+            <div class="code-block">
+                <pre>git clone https://github.com/mravinale/base.api.git
+cd base.api
+yarn install</pre>
+            </div>
+            
+            <h3>Environment Setup</h3>
+            <div class="code-block">
+                <pre>mkdir -p src/infrastructure/config/env
+cp .env.example src/infrastructure/config/env/.env.local</pre>
+            </div>
+            
+            <h3>Start Development Server</h3>
+            <div class="code-block">
+                <pre>yarn dev</pre>
+            </div>
+        </section>
+        
+        <section id="ci-cd">
+            <h2><i class="fas fa-sync"></i> CI/CD</h2>
+            <p>The project uses GitHub Actions for continuous integration and deployment.</p>
+            
+            <h3>Workflow Features</h3>
+            <ul>
+                <li>Automatic builds and tests on pull requests and pushes to main</li>
+                <li>Code coverage reporting with Codecov</li>
+                <li>Security scanning with Snyk</li>
+                <li>PostgreSQL service container for integration tests</li>
+            </ul>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>Base API - A Node.js API Starter Template</p>
+            <div class="footer-links">
+                <a href="https://github.com/mravinale/base.api"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://github.com/mravinale/base.api/issues"><i class="fas fa-bug"></i> Issues</a>
+                <a href="https://github.com/mravinale/base.api#license"><i class="fas fa-file-contract"></i> License</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
