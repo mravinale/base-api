@@ -51,21 +51,15 @@ export class UsersService {
         
         // Validate required fields
         if (!userDto.email) {
-            throw ApiError.validation('Email is required', {
-                email: { message: 'Email is required' }
-            });
+            throw ApiError.validation('Email is required');
         }
         
         if (!userDto.password) {
-            throw ApiError.validation('Password is required', {
-                password: { message: 'Password is required' }
-            });
+            throw ApiError.validation('Password is required');
         }
         
         if (!userDto.role) {
-            throw ApiError.validation('Role is required', {
-                role: { message: 'Role is required' }
-            });
+            throw ApiError.validation('Role is required');
         }
         
         // Map the IUserDto to User entity using concrete class
