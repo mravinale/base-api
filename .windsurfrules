@@ -96,10 +96,18 @@ A comprehensive test strategy with **unit**, **integration**, and **persistence*
 ## Code Organization Pattern
 
 - **Controllers**  
-  - Handle HTTP concerns: requests, responses, input validation (TSOA), and response formatting  
+  - Handle HTTP concerns: requests, responses, input validation (TSOA), and response formatting 
+  - Use TSOA decorators to define routes and handle input validation
+  - Use `@Security` decorator to handle Authentication 
   - Delegates business logic to services  
+  - Keep the controller thin and focused on HTTP concerns 
+  - Avoid handling validations in the controller
   - Example: `UsersController.ts`, using TSOA decorators:
     ```ts
+    @Response(400, "Bad request")
+    @SuccessResponse("200", "User updated")
+    @Tags("User")
+    @Security("jwt", ["admin"])
     @Route("users")
     export class UsersController extends Controller {
       constructor(private usersService: UsersService) {
@@ -119,6 +127,7 @@ A comprehensive test strategy with **unit**, **integration**, and **persistence*
   - Throw errors on validation or domain issues  
   - Handle the conversion between entities and DTOs
   - Use the Mapper service to handle the conversion between entities and DTOs
+  - Use `ApiError` to handle validations and errors and throw them to be handled by `ErrorHandler`
   - Typically do not deal with Express or TSOA details—only pure TypeScript methods
 
   ```ts
@@ -127,6 +136,15 @@ A comprehensive test strategy with **unit**, **integration**, and **persistence*
 
     public async createUser(dto: ICreateUserDto): Promise<IUserDto> {
       const user = await this.usersRepository.createUser(dto);
+      // ...
+     if (!user) {
+            throw new ApiError({
+                statusCode: 404,
+                name: 'NotFoundError',
+                message: `User with id ${id} not found`
+            });
+        }
+      // ...
       return this.mapper.getMapper().map(user, User, IUserDto);
     }
   }
@@ -210,13 +228,41 @@ A comprehensive test strategy with **unit**, **integration**, and **persistence*
   - TypeORM decorators for entity mapping
 
 - **Error Handling Pattern**  
-  - Services throw typed errors  
-  - Controllers catch and forward them  
-  - Central `ErrorHandler` processes them
+  - Controllers, Services and Repositories throw typed errors  
+  - Use `ApiError` to handle errors and throw them to be handled by `ErrorHandler`
+  - Central `ErrorHandler` should process them
 
 - **Adapter Pattern**  
   - For external services like better-auth or email providers  
   - Encapsulated in utility classes (e.g., `BetterAdapter`, `EmailAdapter`)
+
+- **Mapper Pattern**  
+  - For mapping between domain models and DTOs  
+  - Encapsulated in utility classes (e.g., `UserMapper`)
+  ```ts
+  export class UserMapper {
+    public map(user: User, UserDto): UserDto;
+
+     // Map from User entity to IUserDto
+    createMap<User, IUserDto>( mapper, User, UserDto, 
+      forMember(
+        (destination) => destination.id,
+        mapFrom((source) => source.id)
+      ), 
+      //...
+    );
+
+    // Map from IUserDto to User entity
+    createMap<IUserDto, User>( mapper, UserDto, User,
+      // Map from IUserDto to User entity
+      forMember(
+        (destination) => destination.id,
+        mapFrom((source) => source.id)
+      ),
+      //...
+    );
+  }
+  ```
 
 ### Testing Patterns
 
@@ -274,7 +320,7 @@ A comprehensive test strategy with **unit**, **integration**, and **persistence*
 6. **Use centralized error handling**, throw errors with `throw new Error('message')` and catch them in the `ErrorHandler`, instead of using `console.error`.
 
 7. **“I” Prefix for Interfaces**  
-   - Consistently prefix interfaces with an “I” (e.g., `IUserDto`, `ICreateUserDto`) as stated in Code Style.  
+   - Consistently prefix interfaces with an “I” (e.g., `IUserDto`, `IOrganizationDto`) as stated in Code Style.  
    - Verify all team members follow this convention across the codebase.
 
 8. **Follow the Class Member Ordering**  
