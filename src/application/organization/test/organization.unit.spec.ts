@@ -2,14 +2,11 @@ import "reflect-metadata";
 import { expect } from "chai";
 import { OrganizationService } from "../organizationService";
 import { OrganizationRepository } from "../organizationRepository";
-import { OrganizationDto } from "../organizationDto";
+import { OrganizationDto } from "../dtos/organizationDto";
 import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
 import { generateMockUUID } from "../../../infrastructure/utils/Models";
 import { mock, instance, when, anyString, anything } from "ts-mockito";
 import { MapperService } from "../../../infrastructure/utils/Mapper";
-import { createMapper } from "@automapper/core";
-import { classes } from "@automapper/classes";
-import { OrganizationMapping } from "../organizationMapping";
 
 // Helper function to generate a mock organization model
 const generateOrganizationModel = () => {

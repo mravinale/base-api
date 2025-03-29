@@ -12,7 +12,7 @@ import {
     Tags,
     Security
 } from "tsoa";
-import { IUserDto } from "./userDto";
+import { IUserDto } from "./dtos/userDto";
 import { IPaginationDto, PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import { UsersService } from "./usersService";
 import { injectable } from 'tsyringe';

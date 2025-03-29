@@ -1,4 +1,4 @@
-import { User } from "../../domain/entities/User";
+import { User } from "../../../domain/entities/User";
 import { AutoMap } from '@automapper/classes';
 
 export interface IOrganizationDto {
