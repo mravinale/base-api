@@ -60,7 +60,7 @@ jobs:
           EOF
 
       - name: Build
-        run: yarn build:tsoa && yarn build
+        run: yarn clean && yarn build
 
       - name: Lint
         run: yarn lint
