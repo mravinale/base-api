@@ -372,9 +372,13 @@ describe(`Users Controller`, () => {
         .get(`/users?&sort=ASC&field=name&filter=${model.name}`)
         .set('Authorization', `Bearer ${authToken}`);
 
+      // Log response for debugging
+      console.log('Pagination failure test response:', res.status);
+      console.log('Response body:', JSON.stringify(res.body, null, 2));
+
       // Assert
-      expect(res.status).to.satisfy((val: number) => val === 400);
-      expect(res.res.text).to.satisfy(text => text.includes("validation error"))
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property('name', 'BadRequestError');
     });
 
   });

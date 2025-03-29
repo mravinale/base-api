@@ -4,6 +4,7 @@ import { DbConnection } from "../../infrastructure/config/dbConnection";
 import { User } from "../../domain/entities/User";
 import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import "reflect-metadata";
+import { ApiError } from "../../infrastructure/utils/ErrorHandler";
 
 @singleton()
 export class UsersRepository {
@@ -12,7 +13,7 @@ export class UsersRepository {
 
     private get userRepository() {
         if (!this.dbConnection.datasource || !this.dbConnection.datasource.isInitialized) {
-            throw new Error('Database connection not initialized');
+            throw ApiError.internal('Database connection not initialized in UsersRepository');
         }
         return this.dbConnection.datasource.getRepository(User);
     }
@@ -20,9 +21,9 @@ export class UsersRepository {
     public async get(id: string): Promise<IUserDto | null> {
         return await this.userRepository
             .createQueryBuilder("user")
+            .leftJoinAndSelect("user.organization", "organization")
             .where("user.id = :id", { id })
             .getOne();
-        
     }
 
     public async getPaginated(dto: PaginationDto): Promise<PaginationDto> {

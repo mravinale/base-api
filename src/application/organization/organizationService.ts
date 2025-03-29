@@ -23,11 +23,7 @@ export class OrganizationService {
         const organization = await this.organizationRepository.get(id);
         
         if (!organization) {
-            throw new ApiError({
-                statusCode: 404,
-                name: 'NotFoundError',
-                message: `Organization with id ${id} not found`
-            });
+            throw ApiError.notFound(`Organization with id ${id} not found`, 'Organization');
         }
 
         // Map the Organization entity to OrganizationDto
@@ -38,11 +34,7 @@ export class OrganizationService {
         const result = await this.organizationRepository.getPaginated(pageDto);
         
         if (!result || !result.docs || !Array.isArray(result.docs)) {
-            throw new ApiError({
-                statusCode: 500,
-                name: 'DataError',
-                message: 'Failed to retrieve paginated organizations'
-            });
+            throw ApiError.internal('Failed to retrieve paginated organizations');
         }
         
         // Map each Organization entity in the docs array to OrganizationDto
@@ -61,10 +53,8 @@ export class OrganizationService {
       
         // Validate required fields
         if (!organizationDto.name) {
-            throw new ApiError({
-                statusCode: 400,
-                name: 'ValidationError',
-                message: 'Organization name is required'
+            throw ApiError.validation('Organization name is required', {
+                name: { message: 'Organization name is required' }
             });
         }
         
@@ -79,11 +69,7 @@ export class OrganizationService {
         const createdOrganization = await this.organizationRepository.create(organizationEntity);
         
         if (!createdOrganization) {
-            throw new ApiError({
-                statusCode: 500,
-                name: 'CreateError',
-                message: 'Failed to create organization'
-            });
+            throw ApiError.internal('Failed to create organization');
         }
         
         // Map the created Organization entity back to OrganizationDto
@@ -93,11 +79,7 @@ export class OrganizationService {
     public async delete(id: string): Promise<string> {
         const organization = await this.organizationRepository.get(id);
         if (!organization) {
-            throw new ApiError({
-                statusCode: 404,
-                name: 'NotFoundError',
-                message: `Organization with id ${id} not found`
-            });
+            throw ApiError.notFound(`Organization with id ${id} not found`, 'Organization');
         } 
        return await this.organizationRepository.delete(id);
     }
@@ -107,11 +89,7 @@ export class OrganizationService {
         const existingOrganization = await this.organizationRepository.get(id);
         
         if (!existingOrganization) {
-            throw new ApiError({
-                statusCode: 404,
-                name: 'NotFoundError',
-                message: `Organization with id ${id} not found`
-            });
+            throw ApiError.notFound(`Organization with id ${id} not found`, 'Organization');
         }
         
         // Map the IOrganizationDto to Organization entity
@@ -121,11 +99,7 @@ export class OrganizationService {
         const updatedOrganization = await this.organizationRepository.update(id, organizationEntity);
         
         if (!updatedOrganization) {
-            throw new ApiError({
-                statusCode: 500,
-                name: 'UpdateError',
-                message: 'Failed to update organization'
-            });
+            throw ApiError.internal('Failed to update organization');
         }
         
         // Map the updated Organization entity back to OrganizationDto

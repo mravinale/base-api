@@ -4,11 +4,15 @@ import { DbConnection } from "../../infrastructure/config/dbConnection";
 import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import "reflect-metadata";
 import { Organization } from "../../domain/entities/Organization";
+import { ApiError } from "../../infrastructure/utils/ErrorHandler";
 
 @singleton()
 export class OrganizationRepository {
 
     constructor(private dbConnection: DbConnection) {
+        if (!this.dbConnection.datasource || !this.dbConnection.datasource.isInitialized) {
+            throw ApiError.internal('Database connection not initialized in OrganizationRepository');
+        }
         this.organizationRepository  = this.dbConnection.datasource.getRepository(Organization);
     }
 

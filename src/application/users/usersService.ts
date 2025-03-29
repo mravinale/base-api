@@ -23,11 +23,7 @@ export class UsersService {
         let user = await this.usersRepository.get(id);
         
         if (!user) {
-            throw new ApiError({
-                statusCode: 404,
-                name: 'NotFoundError',
-                message: `User with id ${id} not found`
-            });
+            throw ApiError.notFound(`User with id ${id} not found`, 'User');
         }
 
         // Map the User entity to UserDto (concrete class)
@@ -38,11 +34,7 @@ export class UsersService {
         const result = await this.usersRepository.getPaginated(pageDto);
 
         if (!result || !result.docs || !Array.isArray(result.docs)) {
-            throw new ApiError({
-                statusCode: 500,
-                name: 'DataError',
-                message: 'Failed to retrieve paginated users'
-            });
+            throw ApiError.internal('Failed to retrieve paginated users');
         }
         
         // Map each User entity in the docs array to UserDto
@@ -59,26 +51,20 @@ export class UsersService {
         
         // Validate required fields
         if (!userDto.email) {
-            throw new ApiError({
-                statusCode: 400,
-                name: 'ValidationError',
-                message: 'Email is required'
+            throw ApiError.validation('Email is required', {
+                email: { message: 'Email is required' }
             });
         }
         
         if (!userDto.password) {
-            throw new ApiError({
-                statusCode: 400,
-                name: 'ValidationError',
-                message: 'Password is required'
+            throw ApiError.validation('Password is required', {
+                password: { message: 'Password is required' }
             });
         }
         
         if (!userDto.role) {
-            throw new ApiError({
-                statusCode: 400,
-                name: 'ValidationError',
-                message: 'Role is required'
+            throw ApiError.validation('Role is required', {
+                role: { message: 'Role is required' }
             });
         }
         
@@ -87,11 +73,7 @@ export class UsersService {
         const createdUser = await this.usersRepository.create(userEntity);
         
         if (!createdUser) { 
-            throw new ApiError({
-                statusCode: 500,
-                name: 'CreateError',
-                message: 'Failed to create user'
-            });
+            throw ApiError.internal('Failed to create user');
         }
         
         // Map the created User entity back to UserDto
@@ -104,11 +86,7 @@ export class UsersService {
         const result = await this.usersRepository.delete(id);
         
         if (result === null) {
-            throw new ApiError({
-                statusCode: 404,
-                name: 'NotFoundError',
-                message: `User with id ${id} not found or could not be deleted`
-            });
+            throw ApiError.notFound(`User with id ${id} not found or could not be deleted`, 'User');
         }
         
         return result;
@@ -122,11 +100,7 @@ export class UsersService {
         const updatedUser = await this.usersRepository.update(id, userEntity);
         
         if (!updatedUser) { 
-            throw new ApiError({
-                statusCode: 404,
-                name: 'NotFoundError',
-                message: `User with id ${id} not found or could not be updated`
-            });
+            throw ApiError.notFound(`User with id ${id} not found or could not be updated`, 'User');
         }
         
         // Map the updated User entity back to UserDto
