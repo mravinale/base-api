@@ -1,178 +1,300 @@
 # Project Rules 
 
 ## Architecture Overview
-The project follows a clean layered architecture with clear separation of concerns. It's structured into three main layers:
 
-1. Domain Layer
-Located in /src/domain/, this layer contains:
+The project follows a clean, layered architecture with a clear separation of concerns, organized into three main layers:
 
-* Entities: Core business objects like User and Organization
-* Migrations: Database schema migrations
+1. **Domain Layer**  
+   Located in `/src/domain/`, this layer contains:
+   - **Entities**: Core business objects like **User** and **Organization**  
+   - **Migrations**: Database schema migrations
 
-2. Application Layer
-Located in /src/application/, this is organized by feature modules:
+2. **Application Layer**  
+   Located in `/src/application/`, organized by feature modules. Each module follows a consistent structure with:
+   - **Controllers**: Handle HTTP requests/responses using TSOA decorators  
+   - **Services**: Contain business logic and orchestrate repository calls  
+   - **Repositories**: Handle data access, using TypeORM for CRUD operations  
+   - **DTOs**: Data Transfer Objects, used for input validation and response formatting (separate from domain entities)  
+   - **Tests**: Unit, integration, and persistence tests, typically organized under a `tests` folder in each module
 
-Each module follows a consistent pattern with:
+3. **Infrastructure Layer**  
+   Located in `/src/infrastructure/`, this contains:
+   - **Config**:  
+     - `authConfig`: Authentication-related configs for better-auth  
+     - `DbConnection`: Database connection setup  
+     - `Constants`: Configuration constants  
+     - `Server`: Main server setup (Express + TSOA integration)  
+     - **IoC Container**: Dependency injection container setup using TSyringe
 
-* Controllers: Handle HTTP requests/responses
-* Services: Contain business logic
-* Repositories: Data access logic
-* DTOs: Data transfer objects for API communication
-* Tests: Unit, integration, and persistence tests
+   - **Utils**: Shared utilities and adapters  
+     - `Authentication`: Express Authentication middleware  
+     - `BetterAdapter`: Integration with the **better-auth** authentication service  
+     - `EmailAdapter`: Integration with the email service  
+     - `Mapper`: Object mapping service (e.g., Automapper or a custom mapping utility)  
+     - `Logger`: Logging utility  
+     - `ErrorHandler`: Central error handling middleware  
+     - `Models`: Database models or helpers for testing
 
-3. Infrastructure Layer
-Located in /src/infrastructure/, this contains:
-
-* Config: Application configuration, server setup, dependency injection
-* Utils: Shared utilities like authentication, logging, error handling
-* BetterAdapter: Integration with the better-auth authentication service
+---
 
 ## Technical Implementation
 
-### API Framework
-* TSOA: Used for API routing, documentation, and OpenAPI/Swagger generation
-* Express: Web framework for handling HTTP requests
-* TypeORM: Object-Relational Mapper for database interactions
-* Dependency Injection
-* TSyringe: Used for dependency injection, making the code more testable and modular
-    * Components are registered in the IoC container and injected where needed
+### API Framework and Tooling
+
+- **TSOA**: Used for API routing, input validation, and OpenAPI/Swagger generation  
+  - Use TSOA’s built-in decorators (e.g., `@Get`, `@Post`, etc.) to define routes  
+  - During the build, TSOA generates a `swagger.json` file automatically  
+  - TSOA also provides runtime validation for DTOs to ensure correct data shapes  
+- **Express**: Web framework for handling HTTP requests and middleware  
+- **TypeORM**: Object-Relational Mapper for database interactions  
+- **TSyringe**: Dependency injection framework to keep components loosely coupled and testable  
+  - Controllers inject Services, Services inject Repositories, etc.
 
 ### Authentication
-* better-auth: External authentication service used exclusively for user authentication
-* All authentication flows through better-auth
-* The authentication flow involves:
-    * Registering users with better-auth
-    * Storing user data in the application database
-    * Authenticating via better-auth for login
+
+- **better-auth**: External authentication service used exclusively for user authentication  
+- All user auth flows through better-auth, including registration and login  
+- The application stores user data in its own database, but authentication tokens and sessions come from better-auth
 
 ### Error Handling
-* Centralized error handling through the ErrorHandler middleware
-* Service layer throws errors that are caught and processed at the controller level
+
+- **Centralized error handling** via the `ErrorHandler` middleware  
+- TSOA automatically handles validation errors for controller input  
+- Services **throw errors** for validation failures or domain issues, which bubble up to controllers and the centralized `ErrorHandler`
+
 
 ### Testing
-* Mocha: Test runner
-* Chai: Assertion library
-* ts-mockito and sinon: Mocking libraries
-* Comprehensive test coverage with unit, integration, and persistence tests
 
-### Code Organization Pattern
-The project follows a consistent pattern across modules:
+A comprehensive test strategy with **unit**, **integration**, and **persistence** tests:
 
-* Controllers: Handle HTTP concerns, input validation, and response formatting
-    * Use TSOA decorators for routing and API documentation
-    * Delegate business logic to services
-* Services: Implement business logic and validation
-    * Throw errors for validation failures
-    * Interact with repositories for data access
-* Repositories: Handle data access and persistence
-    * Use TypeORM for database operations
-    * Return domain entities
-* DTOs: Define data structures for API communication
-    * Separate from domain entities
-    * Used for input validation and response formatting
+- **Unit Tests**  
+  - Isolate a single service or component, mocking out dependencies (using `ts-mockito` or Sinon)  
+  - Verify correct behavior via assertions  
 
+- **Integration Tests**  
+  - Test multiple layers together (controllers, services, repositories)  
+  - Commonly used to test API endpoints end-to-end  
+
+- **Persistence Tests**  
+  - Specifically focus on database interactions, entity mappings, and queries  
+
+**Main Tools**:  
+- **Mocha** (test runner)  
+- **Chai** (assertion library)  
+- **ts-mockito** and **sinon** (mocking libraries)
+
+**Steps for Building Tests**:  
+1. Read the service or component under test  
+2. Identify one scenario to test  
+3. Create the test for that scenario and run it  
+4. If it fails, understand and fix the test (or code) and run again  
+5. If it passes, create another test  
+6. Continue iteratively until minimal coverage is achieved
+
+---
+
+## Code Organization Pattern
+
+- **Controllers**  
+  - Handle HTTP concerns: requests, responses, input validation (TSOA), and response formatting  
+  - Delegates business logic to services  
+  - Example: `UsersController.ts`, using TSOA decorators:
+    ```ts
+    @Route("users")
+    export class UsersController extends Controller {
+      constructor(private usersService: UsersService) {
+        super();
+      }
+
+      @Post()
+      public async createUser(@Body() dto: ICreateUserDto): Promise<IUserDto> {
+        // ...
+      }
+    }
+    ```
+
+- **Services**  
+  - Contain business logic and validation rules  
+  - Orchestrate operations across repositories  
+  - Throw errors on validation or domain issues  
+  - Handle the conversion between entities and DTOs
+  - Use the Mapper service to handle the conversion between entities and DTOs
+  - Typically do not deal with Express or TSOA details—only pure TypeScript methods
+
+  ```ts
+  export class UsersService {
+    constructor(private usersRepository: UsersRepository, private mapper: MapperService) {}
+
+    public async createUser(dto: ICreateUserDto): Promise<IUserDto> {
+      const user = await this.usersRepository.createUser(dto);
+      return this.mapper.getMapper().map(user, User, IUserDto);
+    }
+  }
+  ```
+
+- **Repositories**  
+  - Encapsulate data access logic with TypeORM  
+  - Return **domain entities** (or partial entities for specialized queries)  
+  - Avoid returning DTOs directly
+
+  ```ts
+  export class UsersRepository {
+    constructor(private dataSource: DataSource) {}
+
+    public async createUser(dto: ICreateUserDto): Promise<User> {
+      // ...
+    }
+  }
+  ```
+
+- **DTOs**  
+  - Data Transfer Objects, separate from domain entities  
+  - Handle input validation and response formatting  
+  - Prevent exposing internal domain details externally  
+  - Typically suffixed with `Dto` and use an “I” prefix for interfaces (e.g., `ICreateUserDto`)
+
+---
 
 ## Code Style and Patterns Summary
-### Coding Style
-#### TypeScript-First Approach
-* Strong typing throughout the codebase
-* Interface-based design for DTOs and service contracts
-* Proper use of TypeScript decorators for metadata
-#### Naming Conventions
-* PascalCase: Classes, interfaces, and types (e.g., UsersController, IUserDto)
-* camelCase: Variables, methods, and properties
-* Prefixes: Interfaces often prefixed with "I" (e.g., ISignupDto)
-* Suffixes: Controllers, Services, and Repositories use descriptive suffixes
-#### File Organization
-* One class per file
-* Files named after their primary class
-* Consistent directory structure within modules
-#### Code Formatting
-* Consistent indentation (2 spaces)
-* Clear spacing around operators
-* Proper line breaks for readability
-* Semicolons at the end of statements
+
+### TypeScript-First Approach
+
+- Strong typing throughout the codebase  
+- Interface-based design for DTOs and service contracts  
+- Proper use of TypeScript decorators (TSOA, TypeORM, TSyringe)
+
+### Naming Conventions
+
+- **PascalCase**: Classes, interfaces, types (e.g., `UserService`, `IUserDto`)  
+- **camelCase**: Variables, methods, properties  
+- **Prefixes**: Interfaces often prefixed with "I" (e.g., `ISignupDto`)  
+- **Suffixes**: Controllers, Services, Repositories use descriptive suffixes
+
+### File Organization
+
+- One class per file whenever possible  
+- Files named for their primary class (e.g., `UsersController.ts`)  
+- Consistent directory structure within each module
+
+### Code Formatting
+
+- Consistent indentation (2 spaces)  
+- Clear spacing around operators  
+- Proper line breaks for readability  
+- Semicolons at the end of statements
 
 ### Design Patterns
-* Dependency Injection Pattern
-* Constructor injection using TSyringe
-* Services injected into controllers
-* Repositories injected into services
-* Facilitates testability and loose coupling
-#### Repository Pattern
-* Abstracts data access logic
-* Each entity has its own repository
-* Repositories handle CRUD operations
-* Returns domain entities, not DTOs
-#### Service Layer Pattern
-* Contains business logic
-* Validates inputs and enforces business rules
-* Orchestrates operations across repositories
-* Throws specific errors for validation failures
-#### DTO Pattern
-* Clear separation between API models and domain entities
-* Used for input validation and response formatting
-* Prevents exposing internal domain details
-#### Controller-Service-Repository Pattern
-* Controllers handle HTTP concerns
-* Services contain business logic
-* Repositories manage data access
-* Clear separation of responsibilities
-#### Decorator Pattern
-* TSOA decorators for API documentation
-* TSyringe decorators for dependency injection
-* TypeORM decorators for entity mapping
-#### Error Handling Pattern
-* Service layer throws specific errors
-* Controllers catch and process errors
-* Centralized error handling middleware
-#### Adapter Pattern
-* BetterAdapter encapsulates external authentication service
-* Provides a consistent interface to the application
+
+- **Dependency Injection Pattern**  
+  - Constructor injection via TSyringe  
+  - Services injected into Controllers, Repositories injected into Services
+
+- **Repository Pattern**  
+  - Abstracts data access logic away from services  
+  - Each entity typically has its own repository or extends a base repository
+
+- **Service Layer Pattern**  
+  - Centralized business logic, orchestrates across repositories  
+  - Validation, error throwing, no direct HTTP or Express code
+
+- **DTO Pattern**  
+  - Ensures domain model is not overexposed  
+  - Separate data structures for input/output
+
+- **Controller-Service-Repository**  
+  - Clear separation of responsibilities
+
+- **Decorator Pattern**  
+  - TSOA decorators for routing  
+  - TSyringe decorators for DI  
+  - TypeORM decorators for entity mapping
+
+- **Error Handling Pattern**  
+  - Services throw typed errors  
+  - Controllers catch and forward them  
+  - Central `ErrorHandler` processes them
+
+- **Adapter Pattern**  
+  - For external services like better-auth or email providers  
+  - Encapsulated in utility classes (e.g., `BetterAdapter`, `EmailAdapter`)
 
 ### Testing Patterns
-#### Unit Testing
-* Isolated testing of individual components
-* Heavy use of mocking with ts-mockito and sinon
-* Focus on behavior verification
-* Use user use-case unit tests as an example
-#### Integration Testing
-* Tests interaction between components
-* Verifies API endpoints work end-to-end
-* Use user use-case integration tests as an example
-##### Persistence Testing
-* Specifically tests database interactions
-* Verifies entity mappings and queries
-* Use user use-case persistance tests as an example
-##### Test Doubles
-* Mocks for dependencies
-* Stubs for external services
-* Spies for verification
 
+- Start with small scenarios, verify and expand coverage gradually  
+- Keep tests straightforward (KISS principle)  
+- Heavily use mocking/stubbing for unit tests  
+- Focus on behavior verification  
+- Integration tests ensure multi-layer flow works (e.g., using `supertest`)
+- Persist tests are for testing repository and database interactions 
 
 ### Software Principles
-* **DRY (Don't Repeat Yourself)**:
-  * Extract common logic into shared utility functions
-  * Create base classes for similar components
-  * Use TypeScript generics for reusable type-safe components
-* **KISS (Keep It Simple, Stupid)**:
-  * Favor straightforward implementations over clever solutions
-  * Break complex functions into smaller, focused functions
-  * Limit method length to improve readability (< 20 lines)
-* **SOLID Principles**:
-  * Single Responsibility: Each class should have only one reason to change
-  * Open/Closed: Software entities should be open for extension but closed for modification
-  * Liskov Substitution: Subtypes must be substitutable for their base types
-  * Interface Segregation: Clients should not depend on interfaces they don't use
-  * Dependency Inversion: Depend on abstractions, not concretions
 
-## Recommendations
-* Use TSOA for routing, validation, API controllers implementation and documentation
-* Use TypeORM for database interactions
-* Use dependency injection for better testability
-* Use TSyringe for dependency injection
-* Use the provided code organization pattern for consistent code structure
-* Use TypeScript for type safety and better code quality
-* Use consistent naming conventions for variables, functions, and classes
-* Use consistent spacing and indentation for code readability
-* **Read linters and configuration files before creating new code**
+- **DRY (Don’t Repeat Yourself)**  
+  - Extract common logic to shared utilities or base classes  
+  - Use TypeScript generics where applicable
+
+- **KISS (Keep It Simple, Stupid)**  
+  - Avoid overly clever solutions  
+  - Smaller, focused functions
+  - Prefer **early returns** to reduce nested conditionals and improve readability
+
+- **SOLID Principles**  
+  - **Single Responsibility**: Each class has one responsibility  
+  - **Open/Closed**: Open for extension, closed for modification  
+  - **Liskov Substitution**: Subtypes must be usable as their base types  
+  - **Interface Segregation**: Don’t depend on interfaces you don’t use  
+  - **Dependency Inversion**: Depend on abstractions, not concretions
+
+---
+
+## Additional Recommendations
+
+1. **Mapping**  
+   - Convert Entities to DTOs and viceversa in Services, The Service layer is in charge to handle the conversion and tackle the impedance mismatch between the domain and the application layer.
+   - Keep mapping logic consolidated for maintainability and to prevent domain leakage.
+
+2. **TSOA Setup & Error Flow**  
+   - TSOA handles validation errors (e.g., 400 for invalid DTO input).  
+   - Any service or application errors should be thrown and caught by the custom `ErrorHandler`.  
+   - Ensure TSOA’s generated errors also flow into your `ErrorHandler`.
+
+3. **CI/CD and Linting**  
+   - Maintain a consistent code style with ESLint/Prettier (or whichever tool is configured).  
+   - Lint checks should run in CI to catch style or formatting issues.  
+   - Follow the `.eslintrc`, `.prettierrc`, or equivalent configs to ensure a unified style.
+
+4. **Test Folder Structure**  
+   - Inside each module (e.g., `/src/application/users/tests`), keep separate folders/files for **unit**, **integration**, and **persistence** tests if it suits your team’s preference.  
+   - Name tests clearly (e.g., `UsersService.spec.ts` or `UsersController.integration.spec.ts`).
+
+5. **Repository Return Types**  
+   - Repositories return **domain entities** or partial domain entities for specialized queries.  
+   - **Do not** return DTOs from repositories—keep domain vs. DTO layers separate.
+
+6. **Use centralized error handling**, throw errors with `throw new Error('message')` and catch them in the `ErrorHandler`, instead of using `console.error`.
+
+7. **“I” Prefix for Interfaces**  
+   - Consistently prefix interfaces with an “I” (e.g., `IUserDto`, `ICreateUserDto`) as stated in Code Style.  
+   - Verify all team members follow this convention across the codebase.
+
+8. **Follow the Class Member Ordering**  
+   - When adding a new class (controller, service, repository, etc.), use the following order:
+     1. `public-static-field`
+     2. `public-static-method`
+     3. `public-instance-field`
+     4. `public-constructor`
+     5. `public-instance-method`
+     6. `protected-static-field`
+     7. `protected-static-method`
+     8. `protected-instance-field`
+     9. `protected-constructor`
+     10. `protected-instance-method`
+     11. `private-static-field`
+     12. `private-static-method`
+     13. `private-instance-field`
+     14. `private-constructor`
+     15. `private-instance-method`
+
+---
+
+By following these rules and patterns, you’ll maintain a consistent, testable, and robust TypeScript codebase. The layered architecture, clear module organization, and usage of modern TypeScript frameworks (TSOA, TypeORM, TSyringe) will help ensure that your application is easy to scale and evolve over time.

@@ -6,6 +6,7 @@ import { OrganizationRepository } from "./organizationRepository";
 import { MapperService } from "../../infrastructure/utils/Mapper";
 import { OrganizationMapping } from "./organizationMapping";
 import { Organization } from "../../domain/entities/Organization";
+import { ApiError } from "../../infrastructure/utils/ErrorHandler";
 
 @singleton()
 export class OrganizationService {
@@ -18,11 +19,15 @@ export class OrganizationService {
         this.mapperService.addProfile(OrganizationMapping);
     }
 
-    public async get(id: string): Promise<IOrganizationDto | null> {
+    public async get(id: string): Promise<IOrganizationDto> {
         const organization = await this.organizationRepository.get(id);
         
         if (!organization) {
-            return null;
+            throw new ApiError({
+                statusCode: 404,
+                name: 'NotFoundError',
+                message: `Organization with id ${id} not found`
+            });
         }
 
         // Map the Organization entity to OrganizationDto
@@ -33,7 +38,11 @@ export class OrganizationService {
         const result = await this.organizationRepository.getPaginated(pageDto);
         
         if (!result || !result.docs || !Array.isArray(result.docs)) {
-            throw new Error('Failed to retrieve paginated organizations');
+            throw new ApiError({
+                statusCode: 500,
+                name: 'DataError',
+                message: 'Failed to retrieve paginated organizations'
+            });
         }
         
         // Map each Organization entity in the docs array to OrganizationDto
@@ -49,39 +58,16 @@ export class OrganizationService {
     }
 
     public async create(organizationDto: IOrganizationDto): Promise<IOrganizationDto | null> {
-        try {
-            // Validate required fields
-            if (!organizationDto.name) {
-                throw new Error('Organization name is required');
-            }
-            
-            // Map the IOrganizationDto to Organization entity
-            const organizationEntity = this.mapperService.getMapper().map(
-                organizationDto, 
-                OrganizationDto, 
-                Organization
-            );
-            
-            // Create the organization
-            const createdOrganization = await this.organizationRepository.create(organizationEntity);
-            
-            if (!createdOrganization) {
-                return null;
-            }
-            
-            // Map the created Organization entity back to OrganizationDto
-            return this.mapperService.getMapper().map(createdOrganization, Organization, OrganizationDto);
-        } catch (error) {
-            console.error('OrganizationService.create - Error:', error);
-            throw error;
+      
+        // Validate required fields
+        if (!organizationDto.name) {
+            throw new ApiError({
+                statusCode: 400,
+                name: 'ValidationError',
+                message: 'Organization name is required'
+            });
         }
-    }
-
-    public async delete(id: string): Promise<string> {
-        return await this.organizationRepository.delete(id);
-    }
-
-    public async update(id: string, organizationDto: IOrganizationDto): Promise<IOrganizationDto | null> {
+        
         // Map the IOrganizationDto to Organization entity
         const organizationEntity = this.mapperService.getMapper().map(
             organizationDto, 
@@ -89,18 +75,60 @@ export class OrganizationService {
             Organization
         );
         
+        // Create the organization
+        const createdOrganization = await this.organizationRepository.create(organizationEntity);
+        
+        if (!createdOrganization) {
+            throw new ApiError({
+                statusCode: 500,
+                name: 'CreateError',
+                message: 'Failed to create organization'
+            });
+        }
+        
+        // Map the created Organization entity back to OrganizationDto
+        return this.mapperService.getMapper().map(createdOrganization, Organization, OrganizationDto);
+    }
+
+    public async delete(id: string): Promise<string> {
+        const organization = await this.organizationRepository.get(id);
+        if (!organization) {
+            throw new ApiError({
+                statusCode: 404,
+                name: 'NotFoundError',
+                message: `Organization with id ${id} not found`
+            });
+        } 
+       return await this.organizationRepository.delete(id);
+    }
+
+    public async update(id: string, organizationDto: IOrganizationDto): Promise<IOrganizationDto> {
+        // Check if the organization exists
+        const existingOrganization = await this.organizationRepository.get(id);
+        
+        if (!existingOrganization) {
+            throw new ApiError({
+                statusCode: 404,
+                name: 'NotFoundError',
+                message: `Organization with id ${id} not found`
+            });
+        }
+        
+        // Map the IOrganizationDto to Organization entity
+        const organizationEntity = this.mapperService.getMapper().map(organizationDto, OrganizationDto, Organization);
+        
         // Update the organization
         const updatedOrganization = await this.organizationRepository.update(id, organizationEntity);
         
         if (!updatedOrganization) {
-            return null;
+            throw new ApiError({
+                statusCode: 500,
+                name: 'UpdateError',
+                message: 'Failed to update organization'
+            });
         }
         
         // Map the updated Organization entity back to OrganizationDto
-        return this.mapperService.getMapper().map(
-            updatedOrganization, 
-            Organization, 
-            OrganizationDto
-        );
+        return this.mapperService.getMapper().map(updatedOrganization, Organization, OrganizationDto);
     }
 }

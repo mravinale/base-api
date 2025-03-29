@@ -25,14 +25,12 @@ export class OrganizationController extends Controller {
     }
 
     @Get("{id}")
+    @Response(404, "Organization not found")
+    @SuccessResponse("200", "Organization found")
     @Tags("Organization")
     @Security("jwt", ["admin"])
     public async get( id: string ): Promise<IOrganizationDto> {
-        const organization = await this.organizationService.get(id);
-        if (!organization) {
-            this.setStatus(404);
-            return {} as IOrganizationDto;
-        }
+        const organization = await this.organizationService.get(id);        
         return organization;
     }
 
@@ -50,65 +48,30 @@ export class OrganizationController extends Controller {
     }
 
     @Response(400, "Bad request")
-    @SuccessResponse("201", "Created") // Custom success response
+    @SuccessResponse("201", "Organization created") // Custom success response
     @Post()
     @Tags("Organization")
     @Security("jwt", ["admin"])
     public async create(@Body() body: IOrganizationDto): Promise<IOrganizationDto> {
-        this.setStatus(201); // Set response status code
         const result = await this.organizationService.create(body);
-        if (!result) {
-            this.setStatus(500);
-            return {} as IOrganizationDto;
-        }
-        return result;
+        return result as IOrganizationDto;
     }
 
     @Response(400, "Bad request")
+    @SuccessResponse("200", "Organization updated")
     @Put("{id}")
     @Tags("Organization")
     @Security("jwt", ["admin"])
     public async update(id: string, @Body() body: IOrganizationDto): Promise<IOrganizationDto> {
-        const result = await this.organizationService.update(id, body);
-        if (!result) {
-            this.setStatus(404);
-            return {} as IOrganizationDto;
-        }
-        return result;
+        return await this.organizationService.update(id, body);
     }
 
+    @Response(400, "Bad request")
+    @SuccessResponse("200", "Organization deleted")
     @Delete("{id}")
     @Tags("Organization")
     @Security("jwt", ["admin"])
     public async delete(id: string): Promise<string> {
-        try {
-            // First check if the organization exists
-            const organization = await this.organizationService.get(id);
-            
-            if (!organization) {
-                this.setStatus(404);
-                return "Organization not found";
-            }
-            
-            const result = await this.organizationService.delete(id);
-            
-            // TypeORM returns the number of affected rows as a string
-            if (result === "0") {
-                this.setStatus(404);
-                return "Organization not found";
-            }
-            
-            return `Organization with ID ${id} deleted successfully`;
-        } catch (error) {
-            // If the error is because the organization doesn't exist, return 404
-            if ((error as Error).message.includes("not found")) {
-                this.setStatus(404);
-                return "Organization not found";
-            }
-            
-            // For other errors, return 500
-            this.setStatus(500);
-            return `Error deleting organization: ${(error as Error).message}`;
-        }
+        return await this.organizationService.delete(id); 
     }
 }
