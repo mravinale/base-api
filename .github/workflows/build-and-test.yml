@@ -47,11 +47,12 @@ jobs:
           mkdir -p src/infrastructure/config/env
           cat > src/infrastructure/config/env/.env.test << EOF
           PORT=3000
-          DB_HOST=localhost
-          DB_PORT=5432
-          DB_USERNAME=postgres
-          DB_PASSWORD=postgres
-          DB_DATABASE=testdb
+          SQL_HOST=localhost
+          SQL_PORT=5432
+          SQL_USERNAME=postgres
+          SQL_PASSWORD=postgres
+          SQL_DB=testdb
+          SQL_DIALECT=postgres
           RESEND_API_KEY=${{ secrets.RESEND_API_KEY || 'test_key' }}
           DEFAULT_FROM_EMAIL=${{ secrets.DEFAULT_FROM_EMAIL || 'test@example.com' }}
           EOF
