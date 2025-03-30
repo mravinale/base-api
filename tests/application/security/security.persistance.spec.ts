@@ -1,11 +1,11 @@
 import "reflect-metadata";
 import { expect } from "chai";
-import { SecurityRepository } from "../securityRepository";
+import { SecurityRepository } from "@application/security/securityRepository";
 import { container } from "tsyringe";
-import { DbConnection } from "../../../infrastructure/config/dbConnection";
-import { generateUserModel } from "../../../infrastructure/utils/Models";
-import { UserRole } from "../../../domain/entities/User";
-import { CryptoService } from "../../../infrastructure/utils/CryptoService";
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { generateUserModel } from "@infrastructure/utils/Models";
+import { UserRole } from "@domain/entities/User";
+import { CryptoService } from "@infrastructure/utils/CryptoService";
 import { DataSource } from "typeorm";
 
 describe("Security Repository", () => {

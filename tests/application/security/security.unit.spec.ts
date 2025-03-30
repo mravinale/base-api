@@ -1,13 +1,13 @@
 import "reflect-metadata";
 import { expect } from "chai";
-import { SecurityController } from "../securityController";
-import { SecurityService } from "../securityService";
+import { SecurityController } from "@application/security/securityController";
+import { SecurityService } from "@application/security/securityService";
 import { mock, instance, when, anyString, anything, verify } from "ts-mockito";
-import { IloginDto } from "../dtos/loginDto";
-import { ISignupDto } from "../dtos/signupDto";
-import { ISecurityDto } from "../dtos/securityDto";
-import { UserRole } from "../../../domain/entities/User";
-import { auth } from "../../../infrastructure/config/authConfiguration";
+import { IloginDto } from "@application/security/dtos/loginDto";
+import { ISignupDto } from "@application/security/dtos/signupDto";
+import { ISecurityDto } from "@application/security/dtos/securityDto";
+import { UserRole } from "@domain/entities/User";
+import { auth } from "@infrastructure/config/authConfiguration";
 import sinon from "sinon";
 
 describe("Security Controller", () => {

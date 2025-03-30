@@ -1,25 +1,22 @@
 import "reflect-metadata";
 import { expect } from "chai";
-import { UsersService } from "../usersService";
-import { UsersRepository } from "../usersRepository";
-import { UserDto } from "../dtos/userDto";
-import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
-import { generateUserModel, generateMockUUID } from "../../../infrastructure/utils/Models";
+import { UsersService } from "@application/users/usersService";
+import { UsersRepository } from "@application/users/usersRepository";
+import { UserDto } from "@application/users/dtos/userDto";
+import { PaginationDto } from "@infrastructure/utils/PaginationDto";
+import { generateMockUUID } from "@infrastructure/utils/Models";
 import { mock, instance, when, anyString, anything } from "ts-mockito";
-import { CryptoService } from "../../../infrastructure/utils/CryptoService";
-import { MapperService } from "../../../infrastructure/utils/Mapper";
-import { User, UserRole } from "../../../domain/entities/User";
+import { MapperService } from "@infrastructure/utils/Mapper";
+import { UserRole } from "@domain/entities/User";
 
 describe("Users Service", () => {
   let service: UsersService;
   let mockedUsersRepository: UsersRepository;
-  let mockedCryptoRepository: CryptoService;
   let mockedMapperService: MapperService;
   let mockedMapper: any;
 
   before(async () => {
     mockedUsersRepository = mock(UsersRepository);
-    mockedCryptoRepository = mock(CryptoService);
     mockedMapperService = mock(MapperService);
     
     // Mock the mapper methods

@@ -6,8 +6,8 @@ import {
   DataSource,
   FindOperator 
 } from 'typeorm';
-import { TypeORMAdapter, AdapterWrapper } from '../BetterAdapter';
-import { User } from '../../../domain/entities/User';
+import { TypeORMAdapter, AdapterWrapper } from '@infrastructure/utils/BetterAdapter';
+import { User } from '@domain/entities/User';
 import { Where } from 'better-auth/types';
 
 describe('BetterAdapter', () => {

@@ -3,13 +3,13 @@ import { expect } from 'chai';
 import supertest from 'supertest';
 import { container } from 'tsyringe';
 
-import { Server } from "../../../infrastructure/config/server";
-import { OrganizationDto } from "../dtos/organizationDto";
-import { DbConnection } from "../../../infrastructure/config/dbConnection";
-import { UsersRepository } from "../../users/usersRepository";
-import { CryptoService } from "../../../infrastructure/utils/CryptoService";
-import { generateUserModel } from "../../../infrastructure/utils/Models";
-import { auth } from '../../../infrastructure/config/authConfiguration';
+import { Server } from "@infrastructure/config/server";
+import { OrganizationDto } from "@application/organization/dtos/organizationDto";
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { UsersRepository } from "@application/users/usersRepository";
+import { CryptoService } from "@infrastructure/utils/CryptoService";
+import { generateUserModel } from "@infrastructure/utils/Models";
+import { auth } from '@infrastructure/config/authConfiguration';
 
 // Helper function to generate a mock organization model
 const generateOrganizationModel = () => {

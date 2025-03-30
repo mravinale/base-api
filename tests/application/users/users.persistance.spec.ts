@@ -1,10 +1,10 @@
 import "reflect-metadata";
 import { expect, assert } from "chai";
-import { UsersRepository } from "../usersRepository";
+import { UsersRepository } from "@application/users/usersRepository";
 import { container } from "tsyringe";
-import { DbConnection } from "../../../infrastructure/config/dbConnection";
-import { generateUserModel } from "../../../infrastructure/utils/Models";
-import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { generateUserModel } from "@infrastructure/utils/Models";
+import { PaginationDto } from "@infrastructure/utils/PaginationDto";
 
 describe("Users Repository", () => {
   let repository: UsersRepository;

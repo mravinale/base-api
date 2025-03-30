@@ -4,9 +4,8 @@ import sinon from 'sinon';
 import { container } from 'tsyringe';
 
 // Import the actual modules
-import { authConfig } from '../authConfiguration';
-import { EmailService } from '../../utils/EmailService';
-import constants from '../constants';
+import { authConfig } from '@infrastructure/config/authConfiguration';
+import constants from '@infrastructure/config/constants';
 
 // Mock EmailService methods
 const mockEmailService = {

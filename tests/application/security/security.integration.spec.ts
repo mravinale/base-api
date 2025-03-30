@@ -2,13 +2,13 @@ import "reflect-metadata";
 import { expect } from "chai";
 import request from "supertest";
 import { container } from "tsyringe";
-import { DbConnection } from "../../../infrastructure/config/dbConnection";
-import { generateUserModel } from "../../../infrastructure/utils/Models";
-import { Server } from "../../../infrastructure/config/server";
-import { CryptoService } from "../../../infrastructure/utils/CryptoService";
-import { UsersRepository } from "../../users/usersRepository";
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { generateUserModel } from "@infrastructure/utils/Models";
+import { Server } from "@infrastructure/config/server";
+import { CryptoService } from "@infrastructure/utils/CryptoService";
+import { UsersRepository } from "@application/users/usersRepository";
 import { Express } from "express";
-import { auth } from "../../../infrastructure/config/authConfiguration";
+import { auth } from "@infrastructure/config/authConfiguration";
 
 describe("Security Controller", () => {
   let server: Server;

@@ -3,17 +3,17 @@ import { expect, assert } from 'chai';
 import supertest from 'supertest';
 import { container } from 'tsyringe';
 
-import { Server } from "../../../infrastructure/config/server";
-import { UserDto } from "../dtos/userDto";
-import { generateUserModel } from "../../../infrastructure/utils/Models";
-import { CryptoService } from "../../../infrastructure/utils/CryptoService";
-import { UsersRepository } from "../usersRepository";
-import { UsersService } from "../usersService"; // Import UsersService
-import { MapperService } from "../../../infrastructure/utils/Mapper"; // Import MapperService with correct path
-import { DbConnection } from "../../../infrastructure/config/dbConnection";
-import { auth } from '../../../infrastructure/config/authConfiguration';
+import { Server } from "@infrastructure/config/server";
+import { UserDto } from "@application/users/dtos/userDto";
+import { generateUserModel } from "@infrastructure/utils/Models";
+import { CryptoService } from "@infrastructure/utils/CryptoService";
+import { UsersRepository } from "@application/users/usersRepository";
+import { UsersService } from "@application/users/usersService"; // Import UsersService
+import { MapperService } from "@infrastructure/utils/Mapper"; // Import MapperService with correct path
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { auth } from '@infrastructure/config/authConfiguration';
 
-const entityName: string = 'user';
+const entityName: string = 'user';  
 
 describe(`Users Controller`, () => {
 

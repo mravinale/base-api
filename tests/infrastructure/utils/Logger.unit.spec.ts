@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { expect, assert } from 'chai';
 import sinon from 'sinon';
-import constants from '../../config/constants';
-import { Logger } from '../Logger';
+import constants from '@infrastructure/config/constants';
+import { Logger } from '@infrastructure/utils/Logger';
 
 describe('Logger', () => {
   let originalEnvironment: string | undefined;

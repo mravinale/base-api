@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { expect, assert } from 'chai';
 import sinon from 'sinon';
 import * as express from 'express';
-import { expressAuthentication } from '../Authentication';
-import { auth } from '../../../infrastructure/config/authConfiguration';
-import { UserRole } from '../../../domain/entities/User';
+import { expressAuthentication } from '@infrastructure/utils/Authentication';
+import { auth } from '@infrastructure/config/authConfiguration';
+import { UserRole } from '@domain/entities/User';
 
 describe('Authentication', () => {
   let mockRequest: Partial<express.Request>;

@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { Request, Response, NextFunction } from 'express';
 import * as sinon from 'sinon';
 
-import { ApiError, ErrorHandler } from '../ErrorHandler';
-import { Logger } from '../Logger';
+import { ApiError, ErrorHandler } from '@infrastructure/utils/ErrorHandler';
+import { Logger } from '@infrastructure/utils/Logger';
 
 describe('ErrorHandler', () => {
   let req: Partial<Request>;

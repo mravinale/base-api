@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { expect } from 'chai'; 
 import * as sinon from 'sinon';
 import { Resend } from 'resend'; 
-import { EmailService } from '../EmailService'; 
-import { Logger } from '../Logger'; 
-import constants from '../../config/constants'; 
+import { EmailService } from '@infrastructure/utils/EmailService'; 
+import { Logger } from '@infrastructure/utils/Logger'; 
+import constants from '@infrastructure/config/constants'; 
 
 describe('EmailService', () => {
     let emailService: EmailService;

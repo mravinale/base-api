@@ -1,12 +1,12 @@
 import "reflect-metadata";
 import { expect } from "chai";
-import { OrganizationService } from "../organizationService";
-import { OrganizationRepository } from "../organizationRepository";
-import { OrganizationDto } from "../dtos/organizationDto";
-import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
-import { generateMockUUID } from "../../../infrastructure/utils/Models";
+import { OrganizationService } from "@application/organization/organizationService";
+import { OrganizationRepository } from "@application/organization/organizationRepository";
+import { OrganizationDto } from "@application/organization/dtos/organizationDto";
+import { PaginationDto } from "@infrastructure/utils/PaginationDto";
+import { generateMockUUID } from "@infrastructure/utils/Models";
 import { mock, instance, when, anyString, anything } from "ts-mockito";
-import { MapperService } from "../../../infrastructure/utils/Mapper"; 
+import { MapperService } from "@infrastructure/utils/Mapper"; 
 
 // Helper function to generate a mock organization model
 const generateOrganizationModel = () => {

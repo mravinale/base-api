@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { assert } from 'chai';
 import { container } from 'tsyringe';
 
-import { OrganizationRepository } from "../organizationRepository";
-import { DbConnection } from '../../../infrastructure/config/dbConnection';
-import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
+import { OrganizationRepository } from "@application/organization/organizationRepository";
+import { DbConnection } from '@infrastructure/config/dbConnection';
+import { PaginationDto } from "@infrastructure/utils/PaginationDto";
 
 // Helper function to generate a mock organization model
 const generateOrganizationModel = () => {
