@@ -1,4 +1,3 @@
-import { IUserDto } from "../../application/users/userDto";
 
 export interface IPaginationDto { /** tsoa doesn't like generics */
   count?: number;

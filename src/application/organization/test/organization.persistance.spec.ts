@@ -3,7 +3,6 @@ import { assert } from 'chai';
 import { container } from 'tsyringe';
 
 import { OrganizationRepository } from "../organizationRepository";
-import { Organization } from '../../../domain/entities/Organization';
 import { DbConnection } from '../../../infrastructure/config/dbConnection';
 import { PaginationDto } from "../../../infrastructure/utils/PaginationDto";
 

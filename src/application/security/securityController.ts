@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags, Example } from "tsoa";
 import { SecurityService } from "./securityService";
 import { inject, injectable } from "tsyringe";
-import { IloginDto } from "./Dtos/loginDto";
-import { ISignupDto } from "./Dtos/signupDto";
-import { IUserDto } from "../users/userDto";
-import { ISecurityDto } from "./Dtos/securityDto"; 
+import { IloginDto } from "./dtos/loginDto";
+import { ISignupDto } from "./dtos/signupDto";
+import { IUserDto } from "../users/dtos/userDto";
+import { ISecurityDto } from "./dtos/securityDto";
 import { auth } from "../../infrastructure/config/authConfiguration";
 import { UserRole } from "../../domain/entities/User";
 

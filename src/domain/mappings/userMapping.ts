@@ -1,6 +1,6 @@
 import { Mapper, createMap, forMember, mapFrom } from '@automapper/core';
 import { User } from '../../domain/entities/User';
-import { IUserDto, UserDto } from './userDto';
+import { IUserDto, UserDto } from '../../application/users/dtos/userDto';
 
 export const UserMapping = (mapper: Mapper): void => {
   // Map from User entity to IUserDto

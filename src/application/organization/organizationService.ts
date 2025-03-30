@@ -1,10 +1,10 @@
-import { IOrganizationDto, OrganizationDto } from "./organizationDto";
+import { IOrganizationDto, OrganizationDto } from "./dtos/organizationDto";
 import { singleton } from 'tsyringe';
 import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import "reflect-metadata";
 import { OrganizationRepository } from "./organizationRepository";
 import { MapperService } from "../../infrastructure/utils/Mapper";
-import { OrganizationMapping } from "./organizationMapping";
+import { OrganizationMapping } from "../../domain/mappings/organizationMapping";
 import { Organization } from "../../domain/entities/Organization";
 import { ApiError } from "../../infrastructure/utils/ErrorHandler";
 

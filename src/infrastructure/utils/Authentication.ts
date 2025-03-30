@@ -1,5 +1,5 @@
 import * as express from "express";
-import { IUserDto } from "../../application/users/userDto";
+import { IUserDto } from "../../application/users/dtos/userDto";
 import { auth } from "../../infrastructure/config/authConfiguration";
 import { UserRole } from "../../domain/entities/User";
 

@@ -1,11 +1,11 @@
-import { IUserDto, UserDto } from "./userDto";
+import { IUserDto, UserDto } from "./dtos/userDto";
 import { singleton, inject } from 'tsyringe';
 import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import "reflect-metadata";
 import { UsersRepository } from "./usersRepository";
 import { MapperService } from "../../infrastructure/utils/Mapper";
 import { User } from "../../domain/entities/User";
-import { UserMapping } from "./userMapping";
+import { UserMapping } from "../../domain/mappings/userMapping";
 import { ApiError } from "../../infrastructure/utils/ErrorHandler";
 
 @singleton()

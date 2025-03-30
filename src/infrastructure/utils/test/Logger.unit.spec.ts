@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { expect, assert } from 'chai';
 import sinon from 'sinon';
-import * as winston from 'winston';
 import constants from '../../config/constants';
 import { Logger } from '../Logger';
 

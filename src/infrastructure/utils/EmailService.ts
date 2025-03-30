@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Resend, type CreateEmailOptions, type CreateEmailResponse } from 'resend';
+import { Resend } from 'resend';
 import { singleton, inject } from 'tsyringe';
 import { Logger } from './Logger';
 import constants from '../config/constants';

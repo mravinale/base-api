@@ -1,4 +1,4 @@
-import { IUserDto } from "./userDto";
+import { IUserDto } from "./dtos/userDto";
 import { singleton } from 'tsyringe';
 import { DbConnection } from "../../infrastructure/config/dbConnection";
 import { User } from "../../domain/entities/User";

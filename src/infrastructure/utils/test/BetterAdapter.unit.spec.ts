@@ -1,16 +1,9 @@
 import 'reflect-metadata';
-import { expect, assert } from 'chai';
+import { assert } from 'chai';
 import sinon from 'sinon';
 import { 
   Repository, 
-  DataSource, 
-  In, 
-  Not, 
-  MoreThan, 
-  MoreThanOrEqual, 
-  LessThan, 
-  LessThanOrEqual, 
-  Like, 
+  DataSource,
   FindOperator 
 } from 'typeorm';
 import { TypeORMAdapter, AdapterWrapper } from '../BetterAdapter';

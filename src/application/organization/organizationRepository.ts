@@ -1,4 +1,4 @@
-import { IOrganizationDto } from "./organizationDto";
+import { IOrganizationDto } from "./dtos/organizationDto";
 import { singleton } from 'tsyringe';
 import { DbConnection } from "../../infrastructure/config/dbConnection";
 import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
