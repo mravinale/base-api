@@ -1,8 +1,8 @@
+import "reflect-metadata";
 import { ISecurityDto } from "./dtos/securityDto";
 import { singleton } from 'tsyringe';
-import { DbConnection } from "../../infrastructure/config/dbConnection";
-import { User } from "../../domain/entities/User";
-import "reflect-metadata";
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { User } from "@domain/entities/User";
 import { ISignupDto } from "./dtos/signupDto";
 
 @singleton()

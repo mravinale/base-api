@@ -20,6 +20,14 @@
     "routesDir": "build",
     "iocModule": "src/infrastructure/config/ioc",
     "authenticationModule": "src/infrastructure/utils/Authentication.ts"
+  },
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@application/*": ["src/application/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "*": ["node_modules/*"]
+    }
   }
-
 }

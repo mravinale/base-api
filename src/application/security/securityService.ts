@@ -1,10 +1,10 @@
+import "reflect-metadata";
 import { ISecurityDto } from "./dtos/securityDto";
 import { singleton } from 'tsyringe';
-import "reflect-metadata";
 import { SecurityRepository } from "./securityRepository";
 import { IloginDto } from "./dtos/loginDto";
 import { ISignupDto } from "./dtos/signupDto";
-import { CryptoService } from "../../infrastructure/utils/CryptoService";
+import { CryptoService } from "@infrastructure/utils/CryptoService";
 
 @singleton()
 export class SecurityService {

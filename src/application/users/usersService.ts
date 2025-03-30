@@ -1,12 +1,12 @@
-import { IUserDto, UserDto } from "./dtos/userDto";
-import { singleton, inject } from 'tsyringe';
-import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import "reflect-metadata";
+import { IUserDto, UserDto } from "./dtos/userDto";
+import { singleton } from 'tsyringe';
+import { PaginationDto } from "@infrastructure/utils/PaginationDto";
 import { UsersRepository } from "./usersRepository";
-import { MapperService } from "../../infrastructure/utils/Mapper";
-import { User } from "../../domain/entities/User";
-import { UserMapping } from "../../domain/mappings/userMapping";
-import { ApiError } from "../../infrastructure/utils/ErrorHandler";
+import { MapperService } from "@infrastructure/utils/Mapper";
+import { User } from "@domain/entities/User";
+import { UserMapping } from "@domain/mappings/userMapping";
+import { ApiError } from "@infrastructure/utils/ErrorHandler";
 
 @singleton()
 export class UsersService {

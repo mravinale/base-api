@@ -22,6 +22,12 @@
     "outDir": "./dist",
     "rootDir": ".",
     "baseUrl": ".",
+    "paths": {
+      "@application/*": ["src/application/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "*": ["node_modules/*"]
+    },
 
     /* Type Checking */
     "strict": true,                                      /* Enable all strict type-checking options. */

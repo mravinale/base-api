@@ -1,6 +1,6 @@
 import { Mapper, createMap, forMember, mapFrom } from '@automapper/core';
-import { Organization } from '../../domain/entities/Organization';
-import { IOrganizationDto, OrganizationDto } from '../../application/organization/dtos/organizationDto';
+import { Organization } from '@domain/entities/Organization';
+import { IOrganizationDto, OrganizationDto } from '@application/organization/dtos/organizationDto';
 
 export const OrganizationMapping = (mapper: Mapper): void => {
   

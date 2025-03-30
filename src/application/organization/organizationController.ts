@@ -13,7 +13,7 @@ import {
     Security
 } from "tsoa";
 import { IOrganizationDto } from "./dtos/organizationDto";
-import { IPaginationDto, PaginationDto } from "../../infrastructure/utils/PaginationDto";
+import { IPaginationDto, PaginationDto } from "@infrastructure/utils/PaginationDto";
 import { injectable } from 'tsyringe';
 import { OrganizationService } from "./organizationService";
 

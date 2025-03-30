@@ -1,10 +1,10 @@
-import { IUserDto } from "./dtos/userDto";
-import { singleton } from 'tsyringe';
-import { DbConnection } from "../../infrastructure/config/dbConnection";
-import { User } from "../../domain/entities/User";
-import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
 import "reflect-metadata";
-import { ApiError } from "../../infrastructure/utils/ErrorHandler";
+import { IUserDto } from "@application/users/dtos/userDto";
+import { singleton } from 'tsyringe';
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { User } from "@domain/entities/User";
+import { PaginationDto } from "@infrastructure/utils/PaginationDto";
+import { ApiError } from "@infrastructure/utils/ErrorHandler";
 
 @singleton()
 export class UsersRepository {

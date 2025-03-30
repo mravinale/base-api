@@ -1,7 +1,7 @@
-import { UserRole } from "../../../domain/entities/User";
+import { UserRole } from "@domain/entities/User";
 import { AutoMap } from '@automapper/classes';
 
-export interface IUserDto {
+export interface IUserDto {     
     id?: string;
     name?: string;
     email?: string;

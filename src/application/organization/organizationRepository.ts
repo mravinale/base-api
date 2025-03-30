@@ -1,10 +1,10 @@
+import "reflect-metadata";
 import { IOrganizationDto } from "./dtos/organizationDto";
 import { singleton } from 'tsyringe';
-import { DbConnection } from "../../infrastructure/config/dbConnection";
-import { PaginationDto } from "../../infrastructure/utils/PaginationDto";
-import "reflect-metadata";
-import { Organization } from "../../domain/entities/Organization";
-import { ApiError } from "../../infrastructure/utils/ErrorHandler";
+import { DbConnection } from "@infrastructure/config/dbConnection";
+import { PaginationDto } from "@infrastructure/utils/PaginationDto";
+import { Organization } from "@domain/entities/Organization";
+import { ApiError } from "@infrastructure/utils/ErrorHandler";
 
 @singleton()
 export class OrganizationRepository {

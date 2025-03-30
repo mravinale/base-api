@@ -5,8 +5,8 @@ import { IloginDto } from "./dtos/loginDto";
 import { ISignupDto } from "./dtos/signupDto";
 import { IUserDto } from "../users/dtos/userDto";
 import { ISecurityDto } from "./dtos/securityDto";
-import { auth } from "../../infrastructure/config/authConfiguration";
-import { UserRole } from "../../domain/entities/User";
+import { auth } from "@infrastructure/config/authConfiguration";
+import { UserRole } from "@domain/entities/User";
 
 @injectable()
 @Route("security")

@@ -7,9 +7,9 @@
     "dev": "yarn env:dev ts-node-dev --respawn --transpile-only ./src/index.ts",
     "test": "yarn start:test",
     "test:file": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000",
-    "start:local": "yarn build:tsoa && yarn env:local tsc-watch -p tsconfig.json --onSuccess \"node ./dist/src/index.js\"",
+    "start:local": "yarn build && yarn env:local node ./dist/src/index.js",
     "start:dev": "yarn build && yarn env:dev node ./dist/src/index.js",
-    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000 ./dist/src/application/**/test/*.spec.js ./dist/src/infrastructure/**/test/*.spec.js --exit",
+    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --require ./test-setup.js --timeout 35000 ./dist/src/application/**/test/*.spec.js ./dist/src/infrastructure/**/test/*.spec.js --exit",
     "env:local": "cross-env NODE_ENV=local",
     "env:dev": "cross-env NODE_ENV=development",
     "env:prod": "cross-env NODE_ENV=production",
@@ -21,6 +21,16 @@
     "clean": "rm -rf ./dist && rm -rf ./build && mkdir build",
     "copy:env": "cp -R src/infrastructure/config/env ./dist/src/infrastructure/config"
   },
+  "_moduleAliases": {
+    "@root": ".",
+    "@application": "dist/src/application",
+    "@domain": "dist/src/domain",
+    "@infrastructure": "dist/src/infrastructure"
+  },
+  "moduleDirectories": [
+    "node_modules",
+    "src"
+  ],
   "main": "index.js",
   "repository": "https://mravinale/base-api.git",
   "author": "Mariano Ravinale <mravinale@tierone.cc>",
@@ -38,6 +48,7 @@
     "express": "^4.18.1",
     "jsdom": "^24.0.0",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
     "pg": "^8.7.3",

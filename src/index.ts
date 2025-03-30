@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'module-alias/register';
 import { initContainer } from './infrastructure/config/ioc'; 
 import { container } from 'tsyringe';
 import { Server } from './infrastructure/config/server';
