@@ -9,7 +9,7 @@
     "test:file": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000",
     "start:local": "yarn build && yarn env:local tsc-watch -p tsconfig.json --onSuccess \"node ./dist/src/index.js\"",
     "start:dev": "yarn build && yarn env:dev node ./dist/src/index.js",
-    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --require ./test-setup.js --timeout 35000 ./dist/tests/application/**/*.spec.js ./dist/tests/infrastructure/**/*.spec.js --exit",
+    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --require ./tests/test-setup.js --timeout 35000 ./dist/tests/application/**/*.spec.js ./dist/tests/infrastructure/**/*.spec.js --exit",
     "env:local": "cross-env NODE_ENV=local",
     "env:dev": "cross-env NODE_ENV=development",
     "env:prod": "cross-env NODE_ENV=production",

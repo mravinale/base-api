@@ -11,6 +11,9 @@ import { CryptoService } from "@infrastructure/utils/CryptoService";
 import { generateUserModel } from "@infrastructure/utils/Models";
 import { auth } from '@infrastructure/config/authConfiguration';
 
+// Get test password from environment or use a secure fallback
+const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || `test_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+
 // Helper function to generate a mock organization model
 const generateOrganizationModel = () => {
   return {
@@ -50,7 +53,7 @@ describe(`Organization Controller`, () => {
     const timestamp = new Date().getTime();
     testUser = generateUserModel();
     testUser.email = `org-user-${timestamp}@testuser.com`; // Make email unique
-    testUser.password = "testPassword"; // Store plain password for login tests
+    testUser.password = TEST_PASSWORD; // Use environment variable or secure generated password
     
     console.log('Test user model:', JSON.stringify(testUser, null, 2));
     

@@ -1,4 +1,4 @@
-import { createCipheriv, createDecipheriv, createHash, scryptSync } from 'crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'crypto';
 import { singleton } from "tsyringe";
 import constants from "./../config/constants";
 
@@ -13,21 +13,32 @@ export class CryptoService {
     }
 
     public encrypt(text: string): string {
-        // Note: ECB mode does not use an IV
-        const cipher = createCipheriv(this.algorithm, this.secretKey, null);
+        // Generate a random initialization vector
+        const iv = randomBytes(16);
+        const cipher = createCipheriv(this.algorithm, this.secretKey, iv);
         let encrypted = cipher.update(text, 'utf8', 'hex');
         encrypted += cipher.final('hex');
-        return encrypted;
+        // Prepend the IV to the encrypted data (IV is needed for decryption)
+        return iv.toString('hex') + ':' + encrypted;
     }
 
     public decrypt(encryptedText: string): string {
-        // Note: ECB mode does not use an IV
-        const decipher = createDecipheriv(this.algorithm, this.secretKey, null);
-        let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+        // Extract the IV from the encrypted text
+        const textParts = encryptedText.split(':');
+        if (textParts.length !== 2) {
+            throw new Error('Invalid encrypted text format');
+        }
+        
+        const iv = Buffer.from(textParts[0], 'hex');
+        const encryptedData = textParts[1];
+        
+        const decipher = createDecipheriv(this.algorithm, this.secretKey, iv);
+        let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
         decrypted += decipher.final('utf8');
         return decrypted;
     }
-    private algorithm: string = 'aes-256-ecb';
+    
+    private algorithm: string = 'aes-256-cbc';
     private secretKey: Buffer;
     private secret: string = constants.CRYPTO.secret || 'defaultSecret';
 }

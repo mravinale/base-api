@@ -1,13 +1,13 @@
-import "reflect-metadata";
-import { expect } from "chai";
+import 'reflect-metadata';
+import { expect } from 'chai';
 import { UsersService } from "@application/users/usersService";
 import { UsersRepository } from "@application/users/usersRepository";
 import { UserDto } from "@application/users/dtos/userDto";
 import { PaginationDto } from "@infrastructure/utils/PaginationDto";
-import { generateMockUUID } from "@infrastructure/utils/Models";
 import { mock, instance, when, anyString, anything } from "ts-mockito";
 import { MapperService } from "@infrastructure/utils/Mapper";
 import { UserRole } from "@domain/entities/User";
+import { generateMockUUID } from "@infrastructure/utils/Models";
 
 describe("Users Service", () => {
   let service: UsersService;

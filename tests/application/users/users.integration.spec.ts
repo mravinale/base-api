@@ -30,6 +30,11 @@ describe(`Users Controller`, () => {
   let testUser: any;
   let createdUserId: any;
 
+  // Get test password from environment or use a secure fallback
+  const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || `test_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+  // Generate a different password for test model
+  const TEST_MODEL_PASSWORD = process.env.TEST_MODEL_PASSWORD || `testmodel_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+
   // Will run once before all tests
   before(async function() {
     this.timeout(20000); // Increase timeout for setup
@@ -67,7 +72,7 @@ describe(`Users Controller`, () => {
     const timestamp = new Date().getTime();
     testUser = generateUserModel();
     testUser.email = `user-${timestamp}@testuser.com`; // Make email unique
-    testUser.password = "testPassword"; // Store plain password for login tests
+    testUser.password = TEST_PASSWORD; // Use environment variable or secure generated password
     
     console.log('Test user model:', JSON.stringify(testUser, null, 2));
     
@@ -177,8 +182,7 @@ describe(`Users Controller`, () => {
     console.log('Test model:', JSON.stringify(model, null, 2));
     
     // Create a test password and encrypt it
-    const testPassword = "test123";
-    const encryptedPassword = cryptoService.encrypt(testPassword);
+    const encryptedPassword = cryptoService.encrypt(TEST_MODEL_PASSWORD);
     console.log('Encrypted password:', encryptedPassword);
     
     dto = new UserDto({

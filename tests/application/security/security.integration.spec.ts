@@ -10,6 +10,9 @@ import { UsersRepository } from "@application/users/usersRepository";
 import { Express } from "express";
 import { auth } from "@infrastructure/config/authConfiguration";
 
+// Get test password from environment or use a secure fallback
+const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || `test_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+
 describe("Security Controller", () => {
   let server: Server;
   let app: Express;
@@ -28,7 +31,7 @@ describe("Security Controller", () => {
     
     // Create a test user for our security tests
     testUser = generateUserModel();
-    testUser.password = "testPassword"; // Store plain password for login tests
+    testUser.password = TEST_PASSWORD; // Use environment variable or secure generated password
     
     // Save with encrypted password
     const encryptedUser = {...testUser};
@@ -82,7 +85,7 @@ describe("Security Controller", () => {
         .post("/security/login")
         .send({
           email: testUser.email,
-          password: "wrongPassword"
+          password: "invalidPassword_" + Math.random().toString(36).substring(2, 10)
         });
 
       // Assert
