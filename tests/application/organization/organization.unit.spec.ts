@@ -1,21 +1,12 @@
 import "reflect-metadata";
 import { expect } from "chai";
+import { TestHelper } from '../../testHelper';
 import { OrganizationService } from "@application/organization/organizationService";
 import { OrganizationRepository } from "@application/organization/organizationRepository";
 import { OrganizationDto } from "@application/organization/dtos/organizationDto";
 import { PaginationDto } from "@infrastructure/utils/PaginationDto";
-import { generateMockUUID } from "@infrastructure/utils/Models";
 import { mock, instance, when, anyString, anything } from "ts-mockito";
 import { MapperService } from "@infrastructure/utils/Mapper"; 
-
-// Helper function to generate a mock organization model
-const generateOrganizationModel = () => {
-  return {
-    id: generateMockUUID(),
-    name: `Org-${Math.random().toString(36).substring(2, 10)}`,
-    users: []
-  };
-};
 
 describe("Organization Service", () => {
   let service: OrganizationService;
@@ -38,7 +29,7 @@ describe("Organization Service", () => {
 
   it("should getById", async () => {
     // Arrange
-    const orgId = generateMockUUID();
+    const orgId = TestHelper.generateMockUUID();
     const testOrg = new OrganizationDto({
       id: orgId,
       name: "Test Organization",
@@ -65,8 +56,8 @@ describe("Organization Service", () => {
     });
     
     const orgModels = [
-      generateOrganizationModel(),
-      generateOrganizationModel()
+      TestHelper.generateOrganizationModel(),
+      TestHelper.generateOrganizationModel()
     ];
     
     const paginationResult = new PaginationDto({
@@ -90,7 +81,7 @@ describe("Organization Service", () => {
 
   it("should create", async () => {
     // Arrange
-    const orgModel = generateOrganizationModel();
+    const orgModel = TestHelper.generateOrganizationModel();
     when(mockedOrganizationRepository.create(anything()))
       .thenResolve(orgModel);
 
@@ -104,7 +95,7 @@ describe("Organization Service", () => {
 
   it("should update", async () => {
     // Arrange
-    const orgId = generateMockUUID();
+    const orgId = TestHelper.generateMockUUID();
     const updatedOrg = {
       id: orgId,
       name: "Updated Organization Name",
@@ -124,7 +115,7 @@ describe("Organization Service", () => {
 
   it("should delete", async () => {
     // Arrange
-    const orgId = generateMockUUID();
+    const orgId = TestHelper.generateMockUUID();
     when(mockedOrganizationRepository.delete(anyString()))
       .thenResolve("1");
 

@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { SecurityRepository } from "@application/security/securityRepository";
 import { container } from "tsyringe";
 import { DbConnection } from "@infrastructure/config/dbConnection";
-import { generateUserModel } from "@infrastructure/utils/Models";
+import { TestHelper } from '../../testHelper';
 import { UserRole } from "@domain/entities/User";
 import { CryptoService } from "@infrastructure/utils/CryptoService";
 import { DataSource } from "typeorm";
@@ -28,7 +28,7 @@ describe("Security Repository", () => {
     cryptoService = container.resolve(CryptoService);
     
     // Create a test user for our security tests
-    testUser = generateUserModel();
+    testUser = TestHelper.generateUserModel();
     testUser.password = cryptoService.encrypt(testUser.password);
   });
 

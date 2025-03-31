@@ -3,12 +3,12 @@ import { expect, assert } from "chai";
 import { UsersRepository } from "@application/users/usersRepository";
 import { container } from "tsyringe";
 import { DbConnection } from "@infrastructure/config/dbConnection";
-import { generateUserModel } from "@infrastructure/utils/Models";
+import { TestHelper } from '../../testHelper';
 import { PaginationDto } from "@infrastructure/utils/PaginationDto";
 
 describe("Users Repository", () => {
   let repository: UsersRepository;
-  let model = generateUserModel();
+  let model = TestHelper.generateUserModel();
   let dbConnection: DbConnection;
 
   before(async () => {

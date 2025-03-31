@@ -2,8 +2,6 @@ import 'reflect-metadata';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { container } from 'tsyringe';
-
-// Import the actual modules
 import { authConfig } from '@infrastructure/config/authConfiguration';
 import constants from '@infrastructure/config/constants';
 

@@ -1,6 +1,5 @@
-// This file is used to register module aliases for tests
-const moduleAlias = require('module-alias');
-const path = require('path');
+import moduleAlias from 'module-alias';
+import path from 'path';
 
 // Register module aliases for compiled JavaScript files
 moduleAlias.addAliases({

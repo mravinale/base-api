@@ -3,7 +3,7 @@ import { expect } from "chai";
 import request from "supertest";
 import { container } from "tsyringe";
 import { DbConnection } from "@infrastructure/config/dbConnection";
-import { generateUserModel } from "@infrastructure/utils/Models";
+import { TestHelper } from '../../testHelper';
 import { Server } from "@infrastructure/config/server";
 import { CryptoService } from "@infrastructure/utils/CryptoService";
 import { UsersRepository } from "@application/users/usersRepository";
@@ -11,7 +11,7 @@ import { Express } from "express";
 import { auth } from "@infrastructure/config/authConfiguration";
 
 // Get test password from environment or use a secure fallback
-const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || `test_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+const TEST_PASSWORD = TestHelper.getTestPassword();
 
 describe("Security Controller", () => {
   let server: Server;
@@ -30,7 +30,7 @@ describe("Security Controller", () => {
     usersRepository = container.resolve(UsersRepository);
     
     // Create a test user for our security tests
-    testUser = generateUserModel();
+    testUser = TestHelper.generateUserModel();
     testUser.password = TEST_PASSWORD; // Use environment variable or secure generated password
     
     // Save with encrypted password

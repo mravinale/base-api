@@ -2,14 +2,13 @@ import 'reflect-metadata';
 import { expect, assert } from 'chai';
 import supertest from 'supertest';
 import { container } from 'tsyringe';
-
 import { Server } from "@infrastructure/config/server";
 import { UserDto } from "@application/users/dtos/userDto";
-import { generateUserModel } from "@infrastructure/utils/Models";
+import { TestHelper } from '../../testHelper';
 import { CryptoService } from "@infrastructure/utils/CryptoService";
 import { UsersRepository } from "@application/users/usersRepository";
-import { UsersService } from "@application/users/usersService"; // Import UsersService
-import { MapperService } from "@infrastructure/utils/Mapper"; // Import MapperService with correct path
+import { UsersService } from "@application/users/usersService";
+import { MapperService } from "@infrastructure/utils/Mapper";
 import { DbConnection } from "@infrastructure/config/dbConnection";
 import { auth } from '@infrastructure/config/authConfiguration';
 
@@ -31,9 +30,9 @@ describe(`Users Controller`, () => {
   let createdUserId: any;
 
   // Get test password from environment or use a secure fallback
-  const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || `test_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+  const TEST_PASSWORD = TestHelper.getTestPassword();
   // Generate a different password for test model
-  const TEST_MODEL_PASSWORD = process.env.TEST_MODEL_PASSWORD || `testmodel_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+  const TEST_MODEL_PASSWORD = TestHelper.getModelTestPassword();
 
   // Will run once before all tests
   before(async function() {
@@ -70,7 +69,7 @@ describe(`Users Controller`, () => {
     console.log('Creating test user for authentication...');
     // Create a test user for authentication with unique identifier to avoid conflicts
     const timestamp = new Date().getTime();
-    testUser = generateUserModel();
+    testUser = TestHelper.generateUserModel();
     testUser.email = `user-${timestamp}@testuser.com`; // Make email unique
     testUser.password = TEST_PASSWORD; // Use environment variable or secure generated password
     
@@ -174,7 +173,7 @@ describe(`Users Controller`, () => {
     console.log('Creating model for tests...');
     // Create model for tests with unique identifier
     const testTimestamp = new Date().getTime();
-    model = generateUserModel();
+    model = TestHelper.generateUserModel();
     model.email = `testmodel-${testTimestamp}@testmodel.com`; // Make email unique
     // Ensure model has a valid UUID
     model.id = undefined; // Let the system generate the ID

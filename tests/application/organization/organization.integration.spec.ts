@@ -2,17 +2,17 @@ import 'reflect-metadata';
 import { expect } from 'chai';
 import supertest from 'supertest';
 import { container } from 'tsyringe';
+import { TestHelper } from '../../testHelper';
 
 import { Server } from "@infrastructure/config/server";
 import { OrganizationDto } from "@application/organization/dtos/organizationDto";
 import { DbConnection } from "@infrastructure/config/dbConnection";
 import { UsersRepository } from "@application/users/usersRepository";
 import { CryptoService } from "@infrastructure/utils/CryptoService";
-import { generateUserModel } from "@infrastructure/utils/Models";
 import { auth } from '@infrastructure/config/authConfiguration';
 
 // Get test password from environment or use a secure fallback
-const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || `test_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+const TEST_PASSWORD = TestHelper.getTestPassword();
 
 // Helper function to generate a mock organization model
 const generateOrganizationModel = () => {
@@ -51,9 +51,9 @@ describe(`Organization Controller`, () => {
     console.log('Creating test user for authentication...');
     // Create a test user for authentication with unique identifier
     const timestamp = new Date().getTime();
-    testUser = generateUserModel();
+    testUser = TestHelper.generateUserModel();
     testUser.email = `org-user-${timestamp}@testuser.com`; // Make email unique
-    testUser.password = TEST_PASSWORD; // Use environment variable or secure generated password
+    testUser.password = TEST_PASSWORD
     
     console.log('Test user model:', JSON.stringify(testUser, null, 2));
     

@@ -7,7 +7,7 @@ import { PaginationDto } from "@infrastructure/utils/PaginationDto";
 import { mock, instance, when, anyString, anything } from "ts-mockito";
 import { MapperService } from "@infrastructure/utils/Mapper";
 import { UserRole } from "@domain/entities/User";
-import { generateMockUUID } from "@infrastructure/utils/Models";
+import { TestHelper } from '../../testHelper';
 
 describe("Users Service", () => {
   let service: UsersService;
@@ -35,7 +35,7 @@ describe("Users Service", () => {
 
   it("should getById", async () => {
     // Arrange
-    const userId = generateMockUUID();
+    const userId = TestHelper.generateMockUUID();
     const userDto = new UserDto({
       name: "hello", 
       email: "test@gmail.com"
@@ -101,7 +101,7 @@ describe("Users Service", () => {
 
   it("should update user", async () => {
     // Arrange
-    const userId = generateMockUUID();
+    const userId = TestHelper.generateMockUUID();
     const userDto = new UserDto({
       name: "updatedUser",
       email: "updated@test.com"
@@ -118,7 +118,7 @@ describe("Users Service", () => {
 
   it("should delete user", async () => {
     // Arrange
-    const userId = generateMockUUID();
+    const userId = TestHelper.generateMockUUID();
     when(mockedUsersRepository.delete(anyString())).thenResolve(1);
 
     // Act
@@ -130,7 +130,7 @@ describe("Users Service", () => {
 
   it("should throw error when user not found", async () => {
     // Arrange
-    const userId = generateMockUUID();
+    const userId = TestHelper.generateMockUUID();
     when(mockedUsersRepository.get(anyString())).thenResolve(null);
 
     // Act & Assert

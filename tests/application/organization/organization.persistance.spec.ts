@@ -1,17 +1,11 @@
 import 'reflect-metadata';
 import { assert } from 'chai';
 import { container } from 'tsyringe';
+import { TestHelper } from '../../testHelper';
 
 import { OrganizationRepository } from "@application/organization/organizationRepository";
 import { DbConnection } from '@infrastructure/config/dbConnection';
 import { PaginationDto } from "@infrastructure/utils/PaginationDto";
-
-// Helper function to generate a mock organization model
-const generateOrganizationModel = () => {
-  return {
-    name: `Test-Org-${Math.random().toString(36).substring(2, 10)}`
-  };
-};
 
 // Helper function to retry database operations
 const retryOperation = async (operation, maxRetries = 3, delay = 500) => {
@@ -68,7 +62,7 @@ const ensureDbConnection = async (dbConnection: DbConnection) => {
 describe('Organization Repository', () => {
   let organizationRepository: OrganizationRepository;
   let dbConnection: DbConnection;
-  let model = generateOrganizationModel();
+  let model = TestHelper.generateUserModel();
   let createdOrgId: string = '';
 
   // Setup - run before all tests
