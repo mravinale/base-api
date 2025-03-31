@@ -9,17 +9,19 @@
     "test:file": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000",
     "start:local": "yarn build && yarn env:local tsc-watch -p tsconfig.json --onSuccess \"node ./dist/src/index.js\"",
     "start:dev": "yarn build && yarn env:dev node ./dist/src/index.js",
-    "start:test": "yarn build && yarn lint && yarn env:test nyc mocha --require ./tests/test-setup.js --timeout 35000 ./dist/tests/application/**/*.spec.js ./dist/tests/infrastructure/**/*.spec.js --exit",
+    "start:test": "yarn build:tests && yarn lint && yarn env:test nyc mocha --require ./dist/tests/test-setup.js --timeout 35000 ./dist/tests/application/**/*.spec.js ./dist/tests/infrastructure/**/*.spec.js --exit",
     "env:local": "cross-env NODE_ENV=local",
     "env:dev": "cross-env NODE_ENV=development",
     "env:prod": "cross-env NODE_ENV=production",
     "env:test": "cross-env NODE_ENV=test",
     "build": "yarn build:tsoa && tsc -p tsconfig.json && yarn copy:env",
+    "build:tests": "yarn build:tsoa && tsc -p tsconfig.json && yarn copy:env && yarn copy:tests",
     "build:debug": "yarn build:tsoa && tsc -p tsconfig-debug.json",
     "build:tsoa": "tsoa spec-and-routes",
     "lint": "yarn build && tslint -c \"./tslint.json\" -p \"./tsconfig.json\"",
     "clean": "rm -rf ./dist && rm -rf ./build && mkdir build",
-    "copy:env": "cp -R src/infrastructure/config/env ./dist/src/infrastructure/config"
+    "copy:env": "cp -R src/infrastructure/config/env ./dist/src/infrastructure/config",
+    "copy:tests": "cp -R tests/test-setup.js ./dist/tests"
   },
   "_moduleAliases": {
     "@root": ".",
