@@ -15,6 +15,9 @@ export class Server {
 
     public app: express.Express = express();
 
+    private readonly port: number = constants.port ? Number(constants.port) : 3030;
+    private server: any = null;
+
     constructor(private dbConnection?: DbConnection) {
         this.app.use(cors());
 
@@ -94,8 +97,5 @@ export class Server {
         }
         process.exit(1);
     }
-
-    private readonly port: number = constants.port ? Number(constants.port) : 3030;
-    private server: any = null;
 
 }

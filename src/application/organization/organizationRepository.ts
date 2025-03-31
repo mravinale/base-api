@@ -8,6 +8,8 @@ import { ApiError } from "@infrastructure/utils/ErrorHandler";
 
 @singleton()
 export class OrganizationRepository {
+    // Private instance fields first
+    private organizationRepository;
 
     constructor(private dbConnection: DbConnection) {
         if (!this.dbConnection.datasource || !this.dbConnection.datasource.isInitialized) {
@@ -73,6 +75,4 @@ export class OrganizationRepository {
         await this.organizationRepository.update(id, fieldsToUpdate);
         return await this.organizationRepository.findOneBy({id});
     }
-
-    private organizationRepository;
 }

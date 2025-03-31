@@ -4,6 +4,9 @@ import { singleton } from 'tsyringe';
 
 @singleton()
 export class MapperService {
+  // Private instance fields first
+  private mapper: Mapper;
+
   constructor() {
     this.mapper = createMapper({
       strategyInitializer: classes()
@@ -17,6 +20,4 @@ export class MapperService {
   public addProfile(profile: (mapper: Mapper) => void): void {
     profile(this.mapper);
   }
-
-  private mapper: Mapper;
 }

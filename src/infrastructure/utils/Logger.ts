@@ -18,6 +18,10 @@ export class Logger {
   public static readonly shouldLog: boolean = constants.environment !== 'test';
   public static readonly console = logger;
 
+  public constructor() {
+    console.log(constants.environment);
+  }
+
   public static log(...args: any[]): void {
     if (Logger.shouldLog) Logger.console.debug(Logger.formatArgs(args));
   }
@@ -36,10 +40,6 @@ export class Logger {
 
   public static verbose(...args: any[]): void {
     if (Logger.shouldLog) Logger.console.verbose(Logger.formatArgs(args));
-  }
-
-  public constructor() {
-    console.log(constants.environment);
   }
 
   private static formatArgs(args: any[]): string {

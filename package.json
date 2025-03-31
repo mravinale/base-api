@@ -7,7 +7,7 @@
     "dev": "yarn env:dev ts-node-dev --respawn --transpile-only ./src/index.ts",
     "test": "yarn start:test",
     "test:file": "yarn build && yarn lint && yarn env:test nyc mocha --timeout 35000",
-    "start:local": "yarn build && yarn env:local tsc-watch -p tsconfig.json --onSuccess \"node ./dist/src/index.js\"",
+    "start:local": "yarn build && yarn lint && yarn env:local tsc-watch -p tsconfig.json --onSuccess \"node ./dist/src/index.js\"",
     "start:dev": "yarn build && yarn env:dev node ./dist/src/index.js",
     "start:test": "yarn build:tests && yarn lint && yarn env:test nyc mocha --require ts-node/register --require ./tests/testSetup.ts --timeout 35000 ./tests/application/**/*.spec.ts ./tests/infrastructure/**/*.spec.ts --exit",
     "env:local": "cross-env NODE_ENV=local",

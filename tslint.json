@@ -15,33 +15,33 @@
     "jsx-no-multiline-js": false,
     "label-position": true,
     "max-line-length": [true, 180],
+    "no-debugger": false,
     "member-ordering": [
       true,
       {
         "order": [
           "public-static-field",
-          "public-static-method",
           "public-instance-field",
-          "public-constructor",
-          "public-instance-method",
-
           "protected-static-field",
-          "protected-static-method",
           "protected-instance-field",
-          "protected-constructor",
-          "protected-instance-method",
-
           "private-static-field",
-          "private-static-method",
           "private-instance-field",
+
+          "public-constructor",
+          "protected-constructor",
           "private-constructor",
+
+          "public-static-method",
+          "public-instance-method",
+          "protected-static-method",
+          "protected-instance-method",
+          "private-static-method",
           "private-instance-method"
         ]
       }
     ],
     "no-any": false,
-    "no-arg": true,
-    "no-bitwise": true,
+    "no-bitwise": true, 
     "no-console": [
       false,
       "log",
@@ -54,7 +54,6 @@
     ],
     "no-consecutive-blank-lines": true,
     "no-construct": true,
-    "no-debugger": false,
     "no-duplicate-variable": true,
     "no-empty": true,
     "no-eval": true,

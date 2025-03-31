@@ -4,6 +4,10 @@ import constants from "./../config/constants";
 
 @singleton()
 export class CryptoService {
+    // Private instance fields first
+    private algorithm: string = 'aes-256-cbc';
+    private secretKey: Buffer;
+    private secret: string = constants.CRYPTO.secret || 'defaultSecret';
 
     constructor() {
         // Hash the secret key to ensure it is 32 bytes
@@ -37,8 +41,4 @@ export class CryptoService {
         decrypted += decipher.final('utf8');
         return decrypted;
     }
-    
-    private algorithm: string = 'aes-256-cbc';
-    private secretKey: Buffer;
-    private secret: string = constants.CRYPTO.secret || 'defaultSecret';
 }

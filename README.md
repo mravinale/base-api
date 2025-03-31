@@ -41,19 +41,44 @@ This project is a seed for building a production-ready **Node.js** API with:
 The project follows a clean, layered architecture with a clear separation of concerns:
 
 ### Domain Layer
-- Core business entities and logic
-- Database migrations
+Located in `/src/domain/`, this layer contains:
+- **Entities**: Core business objects like **User** and **Organization**
+- **Migrations**: Database schema migrations
+- **Mappers**: Object mapping service (e.g., Automapper or a custom mapping utility)
 
 ### Application Layer
-- Controllers: Handle HTTP requests/responses
-- Services: Contain business logic
-- Repositories: Handle data access
-- DTOs: Data Transfer Objects for validation and response formatting
+Located in `/src/application/`, organized by feature modules. Each module follows a consistent structure with:
+- **Controllers**: Handle HTTP requests/responses using TSOA decorators
+- **Services**: Contain business logic and orchestrate repository calls
+- **Repositories**: Handle data access, using TypeORM for CRUD operations
+- **DTOs**: Data Transfer Objects, used for input validation and response formatting (separate from domain entities)
 
 ### Infrastructure Layer
-- Configuration: Environment, database, and server setup
-- Utils: Shared utilities and adapters
-- Authentication: Security middleware and integrations
+Located in `/src/infrastructure/`, this contains:
+- **Config**:
+  - `authConfig`: Authentication-related configs for better-auth
+  - `DbConnection`: Database connection setup
+  - `Constants`: Configuration constants
+  - `Server`: Main server setup (Express + TSOA integration)
+  - **IoC Container**: Dependency injection container setup using TSyringe
+- **Utils**: Shared utilities and adapters
+  - `Authentication`: Express Authentication middleware
+  - `BetterAdapter`: Integration with the **better-auth** authentication service
+  - `EmailAdapter`: Integration with the email service
+  - `Mapper`: Object mapping service (e.g., Automapper or a custom mapping utility)
+  - `Logger`: Logging utility
+  - `ErrorHandler`: Central error handling middleware
+
+### Tests
+Located in `/tests/` folder, organized as:
+- **Unit Tests**:
+  - Isolate a single service or component, mocking out dependencies (using `ts-mockito` or Sinon)
+  - Verify correct behavior via assertions
+- **Integration Tests**:
+  - Test multiple layers together (controllers, services, repositories)
+  - Commonly used to test API endpoints end-to-end
+- **Persistence Tests**:
+  - Specifically focus on database interactions, entity mappings, and queries
 
 ## 🚀 Getting Started
 
@@ -105,16 +130,49 @@ Once the server is running, access the Swagger documentation at:
 
 ## 🧪 Testing
 
-The project includes a comprehensive test suite:
+The project includes a comprehensive test strategy with unit, integration, and persistence tests:
 
-- **Unit Tests** - Test individual components in isolation
-- **Integration Tests** - Test interactions between components
-- **Persistence Tests** - Test database operations
+### Testing Tools
+- **Mocha**: Test runner
+- **Supertest**: For API testing
+- **Chai**: Assertion library
+- **ts-mockito** and **sinon**: Mocking libraries
 
-Run tests with:
+### Test Types
+1. **Unit Tests**
+   - Test individual components in isolation
+   - Mock external dependencies
+   - Focus on business logic and edge cases
+
+2. **Integration Tests**
+   - Test the interaction between multiple components
+   - Verify that different parts of the system work together
+   - Often involve testing API endpoints end-to-end
+
+3. **Persistence Tests**
+   - Focus on database interactions
+   - Verify entity mappings and relationships
+   - Test complex queries and transactions
+
+### Running Tests
 ```bash
+# Run all tests
 yarn test
+
+# Run specific test file
+yarn test:file tests/path/to/test.spec.ts
+
+# Run tests with coverage
+yarn test:coverage
 ```
+
+### Test Approach
+1. Read the service or component under test
+2. Identify one scenario to test
+3. Create the test for that scenario and run it
+4. If it fails, understand and fix the test (or code) and run again
+5. If it passes, create another test
+6. Continue iteratively until minimal coverage is achieved
 
 ## 🔄 CI/CD
 

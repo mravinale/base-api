@@ -8,6 +8,7 @@ The project follows a clean, layered architecture with a clear separation of con
    Located in `/src/domain/`, this layer contains:
    - **Entities**: Core business objects like **User** and **Organization**  
    - **Migrations**: Database schema migrations
+   - **Mappers**: Object mapping service (e.g., Automapper or a custom mapping utility)
 
 2. **Application Layer**  
    Located in `/src/application/`, organized by feature modules. Each module follows a consistent structure with:
@@ -15,8 +16,7 @@ The project follows a clean, layered architecture with a clear separation of con
    - **Services**: Contain business logic and orchestrate repository calls  
    - **Repositories**: Handle data access, using TypeORM for CRUD operations  
    - **DTOs**: Data Transfer Objects, used for input validation and response formatting (separate from domain entities)  
-   - **Tests**: Unit, integration, and persistence tests, typically organized under a `tests` folder in each module
-
+  
 3. **Infrastructure Layer**  
    Located in `/src/infrastructure/`, this contains:
    - **Config**:  
@@ -32,8 +32,18 @@ The project follows a clean, layered architecture with a clear separation of con
      - `EmailAdapter`: Integration with the email service  
      - `Mapper`: Object mapping service (e.g., Automapper or a custom mapping utility)  
      - `Logger`: Logging utility  
-     - `ErrorHandler`: Central error handling middleware  
-     - `Models`: Database models or helpers for testing
+     - `ErrorHandler`: Central error handling middleware 
+
+4. **Tests**: 
+  Located in `/tests/` folder.
+  - **Unit Tests**: 
+    - Isolate a single service or component, mocking out dependencies (using `ts-mockito` or Sinon)  
+    - Verify correct behavior via assertions  
+  - **Integration Tests**:  
+    - Test multiple layers together (controllers, services, repositories)  
+    - Commonly used to test API endpoints end-to-end  
+  - **Persistence Tests**:  
+    - Specifically focus on database interactions, entity mappings, and queries  
 
 ---
 
@@ -80,6 +90,7 @@ A comprehensive test strategy with **unit**, **integration**, and **persistence*
 
 **Main Tools**:  
 - **Mocha** (test runner)  
+- **Supertest** (for API testing)  
 - **Chai** (assertion library)  
 - **ts-mockito** and **sinon** (mocking libraries)
 
@@ -325,21 +336,21 @@ A comprehensive test strategy with **unit**, **integration**, and **persistence*
 
 8. **Follow the Class Member Ordering**  
    - When adding a new class (controller, service, repository, etc.), use the following order:
-     1. `public-static-field`
-     2. `public-static-method`
-     3. `public-instance-field`
-     4. `public-constructor`
-     5. `public-instance-method`
-     6. `protected-static-field`
-     7. `protected-static-method`
-     8. `protected-instance-field`
-     9. `protected-constructor`
-     10. `protected-instance-method`
-     11. `private-static-field`
-     12. `private-static-method`
-     13. `private-instance-field`
-     14. `private-constructor`
-     15. `private-instance-method`
+   - `1. public-static-field`,
+     `2. public-instance-field`,
+     `3. protected-static-field`,
+     `4. protected-instance-field`,
+     `5. private-static-field`,
+     `6. private-instance-field`,
+     `7. public-constructor`,
+     `8. protected-constructor`,
+     `9. private-constructor`,
+     `10. public-static-method`,
+     `11. public-instance-method`,
+     `12. protected-static-method`,
+     `13. protected-instance-method`,
+     `14. private-static-method`,
+     `15. private-instance-method`
 
 ---
 

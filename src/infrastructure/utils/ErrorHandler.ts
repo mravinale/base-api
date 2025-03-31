@@ -15,6 +15,27 @@ export interface ErrorType {
 }
 
 export class ApiError extends Error implements ErrorType {
+  // Public instance fields first
+  public statusCode: number = 500;
+  public fields?: { [field: string]: { message: string } };
+  public code?: string;
+  public source?: string;
+  public timestamp: Date;
+  public data?: any;
+
+  // Constructor after public fields
+  constructor(errorType: ErrorType) {
+    super(errorType.message);
+    this.name = errorType.name;
+    if (errorType.statusCode) this.statusCode = errorType.statusCode;
+    this.fields = errorType.fields;
+    this.code = errorType.code;
+    this.source = errorType.source;
+    this.data = errorType.data;
+    this.timestamp = new Date();
+  }
+
+  // Static methods after constructor
   // Helper methods for common error types
   public static badRequest(message: string, fields?: { [field: string]: { message: string } }): ApiError {
     return new ApiError({
@@ -82,28 +103,10 @@ export class ApiError extends Error implements ErrorType {
       code: 'ERR_DATABASE'
     });
   }
-
-  public statusCode: number = 500;
-  public fields?: { [field: string]: { message: string } };
-  public code?: string;
-  public source?: string;
-  public timestamp: Date;
-  public data?: any;
-
-  constructor(errorType: ErrorType) {
-    super(errorType.message);
-    this.name = errorType.name;
-    if (errorType.statusCode) this.statusCode = errorType.statusCode;
-    this.fields = errorType.fields;
-    this.code = errorType.code;
-    this.source = errorType.source;
-    this.data = errorType.data;
-    this.timestamp = new Date();
-  }
 }
 
 export class ErrorHandler {
-  
+  // Public static methods
   public static handleError(error: any, req: Request, res: Response, next: NextFunction): void {
     const normalizedError: ApiError = ErrorHandler.normalizeError(error);
     const { name, message, fields, statusCode, code, source, timestamp, data } = normalizedError;
