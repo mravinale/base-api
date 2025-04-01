@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags, Example } from "tsoa";
+import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse, Tags, Query } from "tsoa";
 import { SecurityService } from "./securityService";
 import { inject, injectable } from "tsyringe";
 import { IloginDto } from "./dtos/loginDto";
@@ -7,6 +7,7 @@ import { IUserDto } from "../users/dtos/userDto";
 import { ISecurityDto } from "./dtos/securityDto";
 import { auth } from "@infrastructure/config/authConfiguration";
 import { UserRole } from "@domain/entities/User";
+import { ApiError } from "@infrastructure/utils/ErrorHandler";
 
 @injectable()
 @Route("security")
@@ -21,6 +22,24 @@ export class SecurityController extends Controller {
     public async userInfo(@Request() request: any): Promise<IUserDto> {
         return request.user; 
     }
+ 
+    @Get('verify')
+    @SuccessResponse('200', 'Email verification successful')
+    public async verify(@Query() token?: string): Promise<string> {
+        if (!token) {
+            throw ApiError.badRequest('Verification token is required');
+        }
+        
+        try {
+            await auth.api.verifyEmail({
+                query: { token }
+            });
+            
+            return 'Email verification successful';
+        } catch (error: any) {
+            throw ApiError.badRequest(`Email verification failed: ${error.message}`);
+        }
+    }
 
     @Post("login")
     @SuccessResponse("200", "Login successful")
@@ -32,7 +51,7 @@ export class SecurityController extends Controller {
         const userData = await this.securityService.get({ email, password }); 
         
         if (!userData) {
-            throw new Error("Not valid user or password");
+            throw ApiError.internal("Not valid user or password");
         }
 
         try {
@@ -53,8 +72,7 @@ export class SecurityController extends Controller {
                 token: response.token
             };
         } catch (error: any) {
-            console.error('Login error:', error);
-            throw new Error('Authentication failed');
+            throw ApiError.badRequest('Authentication failed');
         }
     } 
 
@@ -66,7 +84,7 @@ export class SecurityController extends Controller {
 
         // Check if user already exists
         let userData = await this.securityService.checkUserEmail(email);
-        if (userData) throw new Error('User already exists');
+        if (userData) throw ApiError.internal('User already exists');
 
         try {
             // Create the user in better-auth first
@@ -84,7 +102,8 @@ export class SecurityController extends Controller {
             // Then create the user in our database
             return await this.securityService.signup(requestBody);
         } catch (error: any) {
-            throw new Error(`Failed to sign up: ${error.message}`);
+            throw ApiError.badRequest(`Failed to sign up: ${error.message}`);
         }
     }
+
 }

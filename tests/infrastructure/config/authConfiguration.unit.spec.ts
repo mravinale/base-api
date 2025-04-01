@@ -52,8 +52,9 @@ describe('Auth Configuration Unit Tests', () => {
     it('should resolve EmailService and call sendVerificationEmail', async () => {
         // Arrange: Define mock user and URL
         const testUser = { id: 'user-1', email: 'test@example.com', name: 'Test User' };
-        const testUrl = 'http://test.com/verify?token=abc';
+        const testUrl = `${constants.BASE_URL}/security/verify`;
         const testToken = 'abc';
+        const expectedUrl = `${constants.BASE_URL}/security/verify?token=${testToken}`;
 
         // Ensure the container resolve stub is working
         expect(container.resolve('EmailService')).to.equal(mockEmailService);
@@ -65,8 +66,8 @@ describe('Auth Configuration Unit Tests', () => {
         expect(mockEmailService.sendVerificationEmail.calledOnce).to.equal(true);
         sinon.assert.calledOnceWithExactly(mockEmailService.sendVerificationEmail, {
             user: testUser,
-            url: testUrl,
-            token: testToken,
+            url: expectedUrl,
+            token: testToken
         });
     });
 
@@ -74,7 +75,7 @@ describe('Auth Configuration Unit Tests', () => {
     it('should resolve EmailService and call sendPasswordResetEmail', async () => {
         // Arrange: Define mock user and URL
         const testUser = { id: 'user-1', email: 'test@example.com', name: 'Test User' };
-        const testUrl = 'http://test.com/reset?token=xyz';
+        const testUrl = `${constants.BASE_URL}/security/reset?token=xyz`;
         const testToken = 'xyz';
 
         // Act: Call the handler function from the authConfig

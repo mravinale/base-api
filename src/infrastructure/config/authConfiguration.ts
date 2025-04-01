@@ -6,6 +6,8 @@ import { DbConnection } from "./dbConnection";
 import constants from "./constants";
 import { EmailService } from "../utils/EmailService";
 
+// Custom verification URL to match our controller endpoint
+const customUrl = '/security/verify';
 // Create a configuration object for better-auth
 export const authConfig = {
   // In production/development, use AdapterWrapper (which wraps TypeORMAdapter)
@@ -27,7 +29,13 @@ export const authConfig = {
     autoSignInAfterVerification: true, // Auto sign-in after verification
     sendVerificationEmail: async ({ user, url, token }) => {
       const emailService = container.resolve(EmailService); 
-      await emailService.sendVerificationEmail({ user, url, token });
+      const myUrl = `${constants.BASE_URL}${customUrl}?token=${token}`;
+      await emailService.sendVerificationEmail({ 
+        user, 
+        url: myUrl, 
+        token 
+      });
+
     }
   },
   

@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import supertest from 'supertest';
 import { container } from 'tsyringe';
 import { TestHelper } from '../../testHelper';
-
 import { Server } from "@infrastructure/config/server";
 import { OrganizationDto } from "@application/organization/dtos/organizationDto";
 import { DbConnection } from "@infrastructure/config/dbConnection";
@@ -13,14 +12,7 @@ import { auth } from '@infrastructure/config/authConfiguration';
 
 // Get test password from environment or use a secure fallback
 const TEST_PASSWORD = TestHelper.getTestPassword();
-
-// Helper function to generate a mock organization model
-const generateOrganizationModel = () => {
-  return {
-    name: `Org-${Math.random().toString(36).substring(2, 10)}`
-  };
-};
-
+ 
 describe(`Organization Controller`, () => {
   let server: Server;
   let app: supertest.SuperTest<supertest.Test>;
@@ -35,12 +27,8 @@ describe(`Organization Controller`, () => {
 
   // This will run once before all tests
   before(async function() {
-    this.timeout(20000); // Increase timeout for setup
     
     console.log('Starting test setup...');
-    
-    // Add a delay to ensure resources from previous tests are released
-    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Initialize dependencies
     dbConnection = container.resolve(DbConnection);
@@ -106,8 +94,8 @@ describe(`Organization Controller`, () => {
     }
     
     console.log('Initializing server...');
-    // Initialize server
-    server = new Server();
+    // Initialize server using the container (ensure controllers imported above)
+    server = container.resolve(Server);
     await server.start();
     app = supertest(server.app);
     

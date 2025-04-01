@@ -35,13 +35,8 @@ describe(`Users Controller`, () => {
   const TEST_MODEL_PASSWORD = TestHelper.getModelTestPassword();
 
   // Will run once before all tests
-  before(async function() {
-    this.timeout(20000); // Increase timeout for setup
-    
+  before(async function() {    
     console.log('Starting test setup...');
-    
-    // Add a delay to ensure resources from previous tests are released
-    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Make sure UsersService is registered in the container
     if (!container.isRegistered(UsersService)) {
