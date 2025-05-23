@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as jwt from "jsonwebtoken";
-import { ISecurityDto } from "../../application/security/Dtos/securityDto";
+import { ISecurityDto } from "../../application/security/dtos/securityDto";
 import { IUserDto } from "../../application/users/userDto";
 import constants from "./../config/constants";
 

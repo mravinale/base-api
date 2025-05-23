@@ -1,9 +1,9 @@
-import { ISecurityDto } from "./Dtos/securityDto";
+import { ISecurityDto } from "./dtos/securityDto";
 import { singleton } from 'tsyringe';
 import "reflect-metadata";
 import { SecurityRepository } from "./securityRepository";
-import { IloginDto } from "./Dtos/loginDto";
-import { ISignupDto } from "./Dtos/signupDto";
+import { IloginDto } from "./dtos/loginDto";
+import { ISignupDto } from "./dtos/signupDto";
 import { CryptoService } from "../../infrastructure/utils/CryptoService";
 
 @singleton()

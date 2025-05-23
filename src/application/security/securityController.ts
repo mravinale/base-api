@@ -2,8 +2,8 @@ import { Body, Controller, Get, Post, Request, Route, Security, SuccessResponse,
 import * as jwt from "jsonwebtoken";
 import { SecurityService } from "./securityService";
 import { inject, injectable } from "tsyringe";
-import { IloginDto } from "./Dtos/loginDto";
-import { ISignupDto } from "./Dtos/signupDto";
+import { IloginDto } from "./dtos/loginDto";
+import { ISignupDto } from "./dtos/signupDto";
 import { IUserDto } from "../users/userDto";
 import constants from "../../infrastructure/config/constants";
 

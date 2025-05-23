@@ -1,9 +1,9 @@
-import { ISecurityDto } from "./Dtos/securityDto";
+import { ISecurityDto } from "./dtos/securityDto";
 import { singleton } from 'tsyringe';
 import { DbConnection } from "../../infrastructure/config/dbConnection";
 import { User } from "../../domain/entities/User";
 import "reflect-metadata";
-import { ISignupDto } from "./Dtos/signupDto";
+import {ISignupDto} from "./dtos/signupDto";
 
 @singleton()
 export class SecurityRepository {
