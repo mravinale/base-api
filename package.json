@@ -35,7 +35,7 @@
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
     "pg": "^8.7.3",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.2",
     "sanitize-html": "^2.11.0",
     "swagger-ui-express": "^4.5.0",
     "tsoa": "^4.1.0",
