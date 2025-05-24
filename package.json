@@ -36,7 +36,7 @@
     "node-fetch": "^3.3.2",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
-    "sanitize-html": "^2.11.0",
+    "sanitize-html": "^2.16.0",
     "swagger-ui-express": "^4.5.0",
     "tsoa": "^4.1.0",
     "tsyringe": "^4.7.0",
