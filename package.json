@@ -24,7 +24,7 @@
   "author": "Mariano Ravinale <mravinale@tierone.cc>",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.7",
+    "axios": "^1.9.0",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
